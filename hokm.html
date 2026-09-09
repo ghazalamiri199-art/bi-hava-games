@@ -273,7 +273,7 @@
 
     let currentTrick = [];
     let leadSuit = "";
-
+let trickLeader = "شما";
     function createDeck() {
 
       deck = [];
@@ -579,7 +579,11 @@ playNextPlayer();
   }
 
   const nextPlayer =
-    players[currentTrick.length];
+    players[
+      (players.indexOf(trickLeader) + currentTrick.length)
+      % players.length
+    ];
+    
 
   if (nextPlayer === "شما") {
     return;
@@ -626,7 +630,7 @@ playNextPlayer();
   } else {
 
     const winner = findTrickWinner();
-
+trickLeader = winner;
 document.getElementById("info").textContent =
   "🏆 برنده این دور: " + winner;
 
