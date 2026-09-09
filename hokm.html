@@ -665,8 +665,10 @@ function playNextPlayer() {
 
   } else {
 
-    document.getElementById("info").textContent =
-      "✅ دور کامل شد؛ حالا دور بعدی شروع می‌شود.";
+    const winner = findTrickWinner();
+
+document.getElementById("info").textContent =
+  "🏆 برنده این دور: " + winner;
 
     setTimeout(function() {
 
