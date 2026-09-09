@@ -287,21 +287,10 @@ const cell=document.createElement("div");
 cell.className="cell";
 
 /* چهار خانه اصلی */
-
-if(row<6 && col<6){
-cell.classList.add("redHome");
-}
-
-else if(row<6 && col>8){
-cell.classList.add("greenHome");
-}
-
-else if(row>8 && col<6){
-cell.classList.add("blueHome");
-}
-
-else if(row>8 && col>8){
-cell.classList.add("yellowHome");
+.redHome{background:#e53935!important}
+.greenHome{background:#43a047!important}
+.blueHome{background:#1e88e5!important}
+.yellowHome{background:#fbc02d!important}
 }
 
 /* مسیرهای رنگی */
@@ -346,18 +335,41 @@ board.appendChild(cell);
 /* پایان حلقه */
 
 }
+/* خانه‌های امن ⭐ */
+.safe{
+  position:relative;
+  font-weight:bold;
+}
 
-/* قرار دادن ستاره‌ها */
+.safeRed{
+  background:#e53935 !important;
+}
 
-allSafePositions.forEach(position=>{
+.safeGreen{
+  background:#43a047 !important;
+}
 
-const pos=path[position];
+.safeBlue{
+  background:#1e88e5 !important;
+}
 
-const index=pos[0]*15+pos[1];
+.safeYellow{
+  background:#fbc02d !important;
+}
 
-const cell=board.children[index];
+.safe::after{
+  content:"★";
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-size:22px;
+  color:white;
+  text-shadow:0 1px 3px #333;
+  z-index:5;
+    };
 
-cell.classList.add("safe");
+
 
 /* چهار خانه شروع رنگی */
 
