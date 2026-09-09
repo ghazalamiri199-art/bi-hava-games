@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bi Hava Games - منچ</title>
+<title>Bi Hava Games - Ludo</title>
 
 <style>
 *{box-sizing:border-box}
@@ -17,19 +17,20 @@ body{
 }
 
 h1{
-    margin:15px 0 5px;
+    margin:12px 0 4px;
 }
 
 #turn{
     margin:8px;
-    font-size:17px;
+    font-size:18px;
+    font-weight:bold;
 }
 
 .board{
     width:94vw;
     max-width:520px;
     aspect-ratio:1;
-    margin:15px auto;
+    margin:12px auto;
     display:grid;
     grid-template-columns:repeat(15,1fr);
     grid-template-rows:repeat(15,1fr);
@@ -42,6 +43,7 @@ h1{
     display:flex;
     align-items:center;
     justify-content:center;
+    position:relative;
     background:white;
 }
 
@@ -58,17 +60,18 @@ h1{
 .center{
     background:white;
     color:#222;
-    font-size:11px;
     font-weight:bold;
+    font-size:11px;
 }
 
 .piece{
-    width:65%;
-    height:65%;
+    width:64%;
+    height:64%;
     border-radius:50%;
     border:3px solid white;
     box-shadow:0 2px 5px #333;
     cursor:pointer;
+    position:relative;
     z-index:5;
 }
 
@@ -84,7 +87,7 @@ h1{
 
 #dice{
     font-size:60px;
-    margin:10px;
+    margin:8px;
 }
 
 button{
@@ -93,19 +96,21 @@ button{
     border-radius:12px;
     font-size:18px;
     font-weight:bold;
+    cursor:pointer;
 }
 
 .players{
     display:flex;
     justify-content:center;
-    gap:7px;
+    gap:6px;
     flex-wrap:wrap;
     margin:12px;
 }
 
 .player{
-    padding:8px 12px;
+    padding:8px 11px;
     border-radius:10px;
+    font-size:14px;
 }
 
 .p-red{background:#e53935}
@@ -136,19 +141,17 @@ button{
 
 <script>
 
-const board = document.getElementById("board");
+const board=document.getElementById("board");
+const turnText=document.getElementById("turn");
+const dice=document.getElementById("dice");
 
-let diceNumber = 0;
-let selectedPiece = null;
+let currentPlayer=0;
+let diceNumber=0;
+let selectedPiece=null;
 
-const positions = {
-    red1:0,
-    red2:0,
-    red3:0,
-    red4:0
-};
+/* مسیر اصلی */
 
-const path = [
+const path=[
 [6,1],[6,2],[6,3],[6,4],[6,5],[6,6],
 [5,6],[4,6],[3,6],[2,6],[1,6],
 [1,7],[1,8],
@@ -163,6 +166,35 @@ const path = [
 [7,1]
 ];
 
+/* اطلاعات بازیکنان */
+
+const players=[
+    {
+        name:"قرمز ❤️",
+        color:"red",
+        pieceClass:"redPiece"
+    },
+    {
+        name:"سبز 💚",
+        color:"green",
+        pieceClass:"greenPiece"
+    },
+    {
+        name:"زرد 💛",
+        color:"yellow",
+        pieceClass:"yellowPiece"
+    },
+    {
+        name:"آبی 💙",
+        color:"blue",
+        pieceClass:"bluePiece"
+    }
+];
+
+const pieces={};
+
+/* ساخت صفحه */
+
 function createBoard(){
 
     for(let row=0;row<15;row++){
@@ -170,6 +202,7 @@ function createBoard(){
         for(let col=0;col<15;col++){
 
             const cell=document.createElement("div");
+
             cell.className="cell";
 
             if(row<6 && col<6)
@@ -196,70 +229,77 @@ function createBoard(){
             if(col==6 && row>=9 && row<=13)
                 cell.className="cell bluePath";
 
-            if(row>=6 && row<=8 && col>=6 && col<=8){
+            if(row>=6 && row<=8 &&
+               col>=6 && col<=8){
 
                 cell.className="cell center";
 
                 if(row==7 && col==7)
-                    cell.innerHTML="منچ 🎯";
+                    cell.textContent="منچ 🎯";
             }
 
             board.appendChild(cell);
         }
     }
 
-    addPieces();
+    createPieces();
 }
 
-function addPieces(){
+/* ساخت 16 مهره */
 
-    const pieces=[
-        [2,2,"redPiece","red1"],
-        [2,4,"redPiece","red2"],
-        [4,2,"redPiece","red3"],
-        [4,4,"redPiece","red4"],
+function createPieces(){
 
-        [2,10,"greenPiece","green1"],
-        [2,12,"greenPiece","green2"],
-        [4,10,"greenPiece","green3"],
-        [4,12,"greenPiece","green4"],
+    const homes={
+        red:[
+            [2,2],[2,4],[4,2],[4,4]
+        ],
+        green:[
+            [2,10],[2,12],[4,10],[4,12]
+        ],
+        blue:[
+            [10,2],[10,4],[12,2],[12,4]
+        ],
+        yellow:[
+            [10,10],[10,12],[12,10],[12,12]
+        ]
+    };
 
-        [10,2,"bluePiece","blue1"],
-        [10,4,"bluePiece","blue2"],
-        [12,2,"bluePiece","blue3"],
-        [12,4,"bluePiece","blue4"],
+    players.forEach((player,playerIndex)=>{
 
-        [10,10,"yellowPiece","yellow1"],
-        [10,12,"yellowPiece","yellow2"],
-        [12,10,"yellowPiece","yellow3"],
-        [12,12,"yellowPiece","yellow4"]
-    ];
+        homes[player.color].forEach((home,index)=>{
 
-    pieces.forEach(p=>{
+            const id=player.color+(index+1);
 
-        const index=p[0]*15+p[1];
+            const piece=document.createElement("div");
 
-        const piece=document.createElement("div");
+            piece.className="piece "+player.pieceClass;
+            piece.id=id;
 
-        piece.className="piece "+p[2];
-        piece.id=p[3];
+            pieces[id]={
+                player:playerIndex,
+                position:-1
+            };
 
-        piece.onclick=function(){
-            selectPiece(piece);
-        };
+            piece.onclick=function(){
 
-        board.children[index].appendChild(piece);
+                if(pieces[id].player!==currentPlayer)
+                    return;
+
+                if(selectedPiece)
+                    selectedPiece.classList.remove("selected");
+
+                selectedPiece=piece;
+                piece.classList.add("selected");
+            };
+
+            const cellIndex=home[0]*15+home[1];
+
+            board.children[cellIndex].appendChild(piece);
+        });
     });
 }
 
-function selectPiece(piece){
-
-    if(selectedPiece)
-        selectedPiece.classList.remove("selected");
-
-    selectedPiece=piece;
-    selectedPiece.classList.add("selected");
-}
+/* تاس */
 
 function rollDice(){
 
@@ -270,26 +310,58 @@ function rollDice(){
         "⚀","⚁","⚂","⚃","⚄","⚅"
     ];
 
-    document.getElementById("dice").textContent=faces[diceNumber];
+    dice.textContent=faces[diceNumber];
 
     if(selectedPiece){
 
-        const id=selectedPiece.id;
+        moveSelectedPiece();
 
-        positions[id]+=diceNumber;
+    }else{
 
-        if(positions[id]>=path.length)
-            positions[id]=path.length-1;
-
-        const pos=path[positions[id]];
-
-        const index=pos[0]*15+pos[1];
-
-        board.children[index].appendChild(selectedPiece);
-
-        selectedPiece.classList.remove("selected");
-        selectedPiece=null;
+        turnText.textContent=
+        "اول یکی از ۴ مهره "+players[currentPlayer].name+
+        " را انتخاب کن 👆";
     }
+}
+
+/* حرکت مهره انتخاب شده */
+
+function moveSelectedPiece(){
+
+    const id=selectedPiece.id;
+
+    const data=pieces[id];
+
+    data.position+=diceNumber;
+
+    if(data.position<0)
+        data.position=0;
+
+    if(data.position>=path.length)
+        data.position=path.length-1;
+
+    const pos=path[data.position];
+
+    const cellIndex=pos[0]*15+pos[1];
+
+    board.children[cellIndex].appendChild(selectedPiece);
+
+    selectedPiece.classList.remove("selected");
+
+    selectedPiece=null;
+
+    /* تغییر نوبت */
+
+    if(diceNumber!==6){
+
+        currentPlayer++;
+
+        if(currentPlayer>=4)
+            currentPlayer=0;
+    }
+
+    turnText.textContent=
+        "نوبت بازیکن "+players[currentPlayer].name;
 }
 
 createBoard();
@@ -297,4 +369,4 @@ createBoard();
 </script>
 
 </body>
-</html>
+    </html>
