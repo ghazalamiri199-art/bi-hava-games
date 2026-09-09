@@ -1,103 +1,213 @@
-<! DOCTYPE html>
-<شبنم لنگ="دیر=""""">
-<سر>
-<متا شارست="UTF-8">
-<متا نام="محتوا=""width=دستگاه-width, مقیاس اولیه=1.0"=محتوا initial-scale=1.0">
-<عنوان>Bi Hava Games - منچ</عنوان>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bi Hava Games - منچ</title>
 
-<سبک>
-*
+<style>
+*{box-sizing:border-box}
 
-بدن
- حاشیه: 0 
- فونت-خانواده: arial, sans-serif; 
- پس زمینه: شماره 1515 
- رنگ: سفید 
- متن-align: مرکز; 
-مرکز
-
-}
- حاشیه: 18px 0 5px; 
-          اندازه فونت:28px;      
-px
-
-#
-          اندازه فونت:18px;      
-          حاشیه:px;      
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#151515;
+    color:white;
+    text-align:center;
 }
 
-.کشتی{
- عرض:92vw 
- عرض:520px 
-          جنبه:1;      
-        حاشیه:15px ماشین;    
-           نمایش:شبکه;       
-           شبکه-modet:تکرار کنید کنید(15,1fr);       
-           شبکه-فرم:تکرار کنید کنید(15,1fr);       
-           مرز:5px جامد سفید;       
-           پس زمینه زمینه:سفید;       
-سفید
-
-.سلول{
-    مرز:1px جامد #ب
-    پس زمینه::#هeee;
-} زمینه
-
-.قرمز{پس زمینه:#e53935}
-.سبز{پس زمینه:#43a047}
-.زرد{پس زمینه:#fbc02d}
-.آبی{background:#1 e88e5}
-
-.
-           پس زمینه:سفید;       
-            نمایش:کک;        
- موارد مشابه:مرکز; موارد مشابه مشابه:مرکز;
- توجیه:مرکز; توجیه:مرکز;
- رنگ:#222; رنگ:#222;
-     اندازه فونت فونت:px; اندازه فونت فونت:px;
-     وزن فونت فونت:جسور; وزن فونت فونت:جسور;
-جسور
-
-.کنترل{کنترل{
-     حاشیه:15px ماشین; حاشیه:15px ماشین;
+h1{
+    margin:18px 0 5px;
+    font-size:28px;
 }
 
-#dice{dice{
-      اندازه فونت فونت:55px; اندازه فونت فونت:55px; اندازه فونت فونت:55px; اندازه فونت فونت:55px;
-      حاشیه:px;  
-px
-
-px{
- مرز:0؛ مرز:0;مرز:0; مرز:0;
-      مرز مرز مرز مرز:px; مرز مرز مرز مرز:px; مرز مرز مرز مرز:px; مرز مرز مرز مرز:px;
- پد:13px 25px; پد:13px 25px 25px;پد:13px 25px; پد:13px 25px;
-      اندازه فونت فونت فونت:px; اندازه فونت فونت فونت:px; اندازه فونت فونت فونت:px; اندازه فونت فونت فونت:px;
-      وزن فونت:جسور; وزن فونت:جسور; وزن فونت:جسور; وزن فونت:جسور;
-       12: اشاره گر; اشاره گر; اشاره گر; اشاره گر;
+#turn{
+    font-size:18px;
+    margin:10px;
 }
 
-#رول{رول{
-      پس زمینه:#ف پس زمینه:#ف 
- رنگ:#111; 
-رنگ
+.board{
+    width:92vw;
+    max-width:520px;
+    aspect-ratio:1;
+    margin:15px auto;
+    display:grid;
+    grid-template-columns:repeat(15,1fr);
+    grid-template-rows:repeat(15,1fr);
+    border:5px solid white;
+    background:white;
+}
 
-.بازیکنان{بازیکنان{بازیکنان{بازیکنان{
- نمایش: فلکس 
- توجیه: مرکز توجیه: center;
- شکاف: شکاف 8px: 8pxشکاف: 818 18:8px;
-px
- حاشیه: 15px 
-px
+.cell{
+    border:1px solid #bbb;
+    background:#eee;
+}
 
-.
- پد: 8px 13px 
- مرز مرز: 10px 
- اندازه فونت: 14px; 
-px
+.red{background:#e53935}
+.green{background:#43a047}
+.yellow{background:#fbc02d}
+.blue{background:#1e88e5}
 
-.
-.p-سبز{background:#43a047}
+.center{
+    background:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#222;
+    font-size:12px;
+    font-weight:bold;
+}
+
+#dice{
+    font-size:55px;
+    margin:10px;
+}
+
+button{
+    border:0;
+    border-radius:12px;
+    padding:13px 25px;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+#roll{
+    background:#fff;
+    color:#111;
+}
+
+.players{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    flex-wrap:wrap;
+    margin:15px;
+}
+
+.player{
+    padding:8px 13px;
+    border-radius:10px;
+    font-size:14px;
+}
+
+.p-red{background:#e53935}
+.p-green{background:#43a047}
 .p-yellow{background:#fbc02d;color:#111}
 .p-blue{background:#1e88e5}
-سبک
-</
+</style>
+</head>
+
+<body>
+
+<h1>🎮 Bi Hava Games</h1>
+
+<div id="turn">نوبت بازیکن قرمز ❤️</div>
+
+<div class="board" id="board"></div>
+
+<div id="dice">🎲</div>
+
+<button id="roll">انداختن تاس</button>
+
+<div class="players">
+    <div class="player p-red">❤️ قرمز</div>
+    <div class="player p-green">💚 سبز</div>
+    <div class="player p-yellow">💛 زرد</div>
+    <div class="player p-blue">💙 آبی</div>
+</div>
+
+<script>
+
+const board = document.getElementById("board");
+const turnText = document.getElementById("turn");
+const dice = document.getElementById("dice");
+const rollButton = document.getElementById("roll");
+
+const names = [
+    "قرمز ❤️",
+    "سبز 💚",
+    "زرد 💛",
+    "آبی 💙"
+];
+
+let currentPlayer = 0;
+
+function createBoard(){
+
+    board.innerHTML = "";
+
+    for(let row=0; row<15; row++){
+
+        for(let col=0; col<15; col++){
+
+            const cell = document.createElement("div");
+            cell.className = "cell";
+
+            if(row < 6 && col < 6){
+                cell.classList.add("red");
+            }
+
+            if(row < 6 && col > 8){
+                cell.classList.add("green");
+            }
+
+            if(row > 8 && col < 6){
+                cell.classList.add("blue");
+            }
+
+            if(row > 8 && col > 8){
+                cell.classList.add("yellow");
+            }
+
+            if(row >= 6 && row <= 8 &&
+               col >= 6 && col <= 8){
+
+                cell.className = "cell center";
+
+                if(row === 7 && col === 7){
+                    cell.textContent = "منچ 🎯";
+                }
+            }
+
+            board.appendChild(cell);
+        }
+    }
+}
+
+function rollDice(){
+
+    const number = Math.floor(Math.random()*6)+1;
+
+    const diceFaces = [
+        "",
+        "⚀",
+        "⚁",
+        "⚂",
+        "⚃",
+        "⚄",
+        "⚅"
+    ];
+
+    dice.textContent = diceFaces[number];
+
+    if(number !== 6){
+        currentPlayer++;
+
+        if(currentPlayer >= 4){
+            currentPlayer = 0;
+        }
+    }
+
+    turnText.textContent =
+        "نوبت بازیکن " + names[currentPlayer];
+}
+
+rollButton.addEventListener("click", rollDice);
+
+createBoard();
+
+</script>
+
+</body>
+ </html>
