@@ -73,6 +73,8 @@
       left: 50%;
       transform: translate(-50%, -50%);
       width: 90%;
+      max-height: 600px;
+      overflow-y: auto;
     }
 
     .cards {
@@ -124,15 +126,15 @@
       display: none;
     }
 
-    #playersCards {
-      margin-top: 20px;
-    }
-
     .playerBox {
-      margin: 12px 0;
-      padding: 10px;
+      margin: 15px 0;
+      padding: 12px;
       background: rgba(0,0,0,0.2);
       border-radius: 12px;
+    }
+
+    .playerBox h3 {
+      margin: 5px;
     }
   </style>
 </head>
@@ -206,9 +208,17 @@
       "4", "3", "2"
     ];
 
+    const players = [
+      "شما",
+      "بازیکن ۲",
+      "بازیکن ۳",
+      "بازیکن ۴"
+    ];
+
     let deck = [];
     let king = "";
     let trump = "";
+    let kingFirstFive = [];
 
     function createDeck() {
 
@@ -247,17 +257,16 @@
 
     function chooseHokm() {
 
-      const players = [
-        "شما",
-        "بازیکن ۲",
-        "بازیکن ۳",
-        "بازیکن ۴"
-      ];
-
-      king = players[Math.floor(Math.random() * players.length)];
+      king =
+        players[Math.floor(Math.random() * players.length)];
 
       document.getElementById("hokmInfo").textContent =
         "👑 حاکم شد: " + king;
+
+      createDeck();
+      shuffleDeck();
+
+      kingFirstFive = deck.slice(0, 5);
 
       setTimeout(function() {
 
@@ -267,26 +276,23 @@
 
         document.getElementById("kingName").textContent = king;
 
-        dealFirstCards();
+        showCards(
+          kingFirstFive,
+          document.getElementById("cards")
+        );
 
       }, 800);
 
     }
 
-    function dealFirstCards() {
+    function showCards(cardList, area) {
 
-      createDeck();
-      shuffleDeck();
+      area.innerHTML = "";
 
-      const firstCards = deck.slice(0, 5);
+      for (let card of cardList) {
 
-      const cardsArea = document.getElementById("cards");
-
-      cardsArea.innerHTML = "";
-
-      for (let card of firstCards) {
-
-        const cardElement = document.createElement("div");
+        const cardElement =
+          document.createElement("div");
 
         cardElement.className = "card";
 
@@ -294,13 +300,15 @@
           card.suit === "♥" ||
           card.suit === "♦"
         ) {
+
           cardElement.classList.add("red");
+
         }
 
         cardElement.textContent =
           card.rank + card.suit;
 
-        cardsArea.appendChild(cardElement);
+        area.appendChild(cardElement);
 
       }
 
@@ -322,23 +330,65 @@
 
     function dealAllCards() {
 
-      createDeck();
-      shuffleDeck();
+      /*
+        ۵ کارت اول قبلاً به حاکم داده شده.
+        این ۵ کارت را نگه می‌داریم.
+      */
 
-      const players = [
-        "شما",
-        "بازیکن ۲",
-        "بازیکن ۳",
-        "بازیکن ۴"
-      ];
+      let remainingDeck = deck.slice(5);
+
+      let hands = {};
+
+      for (let player of players) {
+        hands[player] = [];
+      }
+
+      /*
+        ۵ کارت اول حاکم
+      */
+
+      hands[king] = kingFirstFive.slice();
+
+      /*
+        ۸ کارت بعدی برای کامل شدن ۱۳ کارت حاکم
+      */
+
+      hands[king] =
+        hands[king].concat(remainingDeck.slice(0, 8));
+
+      /*
+        ۳۹ کارت باقی‌مانده:
+        ۱۳ کارت برای هر یک از سه بازیکن دیگر
+      */
+
+      let position = 8;
+
+      for (let player of players) {
+
+        if (player === king) {
+          continue;
+        }
+
+        hands[player] =
+          remainingDeck.slice(position, position + 13);
+
+        position += 13;
+
+      }
+
+      showAllHands(hands);
+
+    }
+
+    function showAllHands(hands) {
 
       const playersCards =
         document.getElementById("playersCards");
 
       playersCards.innerHTML =
-        "<h3>🃏 کارت‌های پخش‌شده</h3>";
+        "<h2>🃏 دست کامل بازیکنان</h2>";
 
-      for (let i = 0; i < players.length; i++) {
+      for (let player of players) {
 
         const playerBox =
           document.createElement("div");
@@ -346,9 +396,10 @@
         playerBox.className = "playerBox";
 
         const title =
-          document.createElement("h4");
+          document.createElement("h3");
 
-        title.textContent = players[i];
+        title.textContent =
+          player + " — " + hands[player].length + " کارت";
 
         playerBox.appendChild(title);
 
@@ -357,29 +408,7 @@
 
         cards.className = "cards";
 
-        const playerCards =
-          deck.slice(i * 13, (i + 1) * 13);
-
-        for (let card of playerCards) {
-
-          const cardElement =
-            document.createElement("div");
-
-          cardElement.className = "card";
-
-          if (
-            card.suit === "♥" ||
-            card.suit === "♦"
-          ) {
-            cardElement.classList.add("red");
-          }
-
-          cardElement.textContent =
-            card.rank + card.suit;
-
-          cards.appendChild(cardElement);
-
-        }
+        showCards(hands[player], cards);
 
         playerBox.appendChild(cards);
 
