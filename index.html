@@ -3,39 +3,41 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bi Hava Games - منچ</title>
+
+<title>Bi Hava Games</title>
 
 <style>
-*{
-    box-sizing:border-box;
-}
-
 body{
     margin:0;
-    font-family:Arial,sans-serif;
     background:#151515;
     color:white;
+    font-family:Arial;
     text-align:center;
 }
 
 h1{
-    margin:15px 0 5px;
-    font-size:27px;
+    margin-top:20px;
 }
 
-#turn{
-    font-size:17px;
-    margin:8px;
+#dice{
+    font-size:70px;
+    margin:25px;
+}
+
+button{
+    font-size:20px;
+    padding:15px 30px;
+    border:0;
+    border-radius:12px;
 }
 
 .board{
-    width:94vw;
-    max-width:520px;
+    width:90vw;
+    max-width:450px;
     aspect-ratio:1;
-    margin:12px auto;
+    margin:20px auto;
     display:grid;
     grid-template-columns:repeat(15,1fr);
-    grid-template-rows:repeat(15,1fr);
     border:5px solid white;
     background:white;
 }
@@ -43,79 +45,36 @@ h1{
 .cell{
     border:1px solid #aaa;
     background:#eee;
-    display:flex;
-    align-items:center;
-    justify-content:center;
 }
 
-.redHome{background:#e53935;}
-.greenHome{background:#43a047;}
-.yellowHome{background:#fbc02d;}
-.blueHome{background:#1e88e5;}
+.red{
+    background:#e53935;
+}
 
-.redPath{background:#ef9a9a;}
-.greenPath{background:#a5d6a7;}
-.yellowPath{background:#fff59d;}
-.bluePath{background:#90caf9;}
+.green{
+    background:#43a047;
+}
 
-.center{
-    background:white;
-    color:#222;
-    font-size:12px;
-    font-weight:bold;
+.yellow{
+    background:#fbc02d;
+}
+
+.blue{
+    background:#1e88e5;
 }
 
 .piece{
-    width:70%;
-    height:70%;
+    width:65%;
+    height:65%;
+    margin:auto;
+    margin-top:15%;
     border-radius:50%;
     border:3px solid white;
-    box-shadow:0 2px 5px #222;
-    transition:0.3s;
 }
 
-.redPiece{background:#b71c1c;}
-.greenPiece{background:#1b5e20;}
-.yellowPiece{background:#f57f17;}
-.bluePiece{background:#0d47a1;}
-
-#dice{
-    font-size:55px;
-    margin:8px;
+.redPiece{
+    background:#8b0000;
 }
-
-button{
-    border:0;
-    border-radius:12px;
-    padding:13px 25px;
-    font-size:18px;
-    font-weight:bold;
-    cursor:pointer;
-}
-
-#roll{
-    background:white;
-    color:#111;
-}
-
-.players{
-    display:flex;
-    justify-content:center;
-    gap:7px;
-    flex-wrap:wrap;
-    margin:12px;
-}
-
-.player{
-    padding:8px 12px;
-    border-radius:10px;
-    font-size:14px;
-}
-
-.p-red{background:#e53935;}
-.p-green{background:#43a047;}
-.p-yellow{background:#fbc02d;color:#111;}
-.p-blue{background:#1e88e5;}
 </style>
 </head>
 
@@ -129,49 +88,89 @@ button{
 
 <div id="dice">🎲</div>
 
-<button id="roll">انداختن تاس</button>
-
-<div class="players">
-    <div class="player p-red">❤️ قرمز</div>
-    <div class="player p-green">💚 سبز</div>
-    <div class="player p-yellow">💛 زرد</div>
-    <div class="player p-blue">💙 آبی</div>
-</div>
+<button onclick="rollDice()">انداختن تاس 🎲</button>
 
 <script>
 
-const board = document.getElementById("board");
-const turnText = document.getElementById("turn");
 const dice = document.getElementById("dice");
-const rollButton = document.getElementById("roll");
 
-const names = [
-    "قرمز ❤️",
-    "سبز 💚",
-    "زرد 💛",
-    "آبی 💙"
+let position = 0;
+
+const faces = [
+    "",
+    "⚀",
+    "⚁",
+    "⚂",
+    "⚃",
+    "⚄",
+    "⚅"
 ];
-
-let currentPlayer = 0;
-let redPosition = 0;
 
 function createBoard(){
 
-    board.innerHTML = "";
+    const board = document.getElementById("board");
 
-    for(let row=0; row<15; row++){
+    for(let i = 0; i < 225; i++){
 
-        for(let col=0; col<15; col++){
+        const cell = document.createElement("div");
 
-            const cell = document.createElement("div");
-            cell.className = "cell";
+        cell.className = "cell";
 
-            if(row < 6 && col < 6){
-                cell.className = "cell redHome";
-            }
-            else if(row < 6 && col > 8){
-                cell.className = "cell greenHome";
-            }
-            else if(row > 8 && col < 6){
-                cell.className = "cell blueHome";
-            }
+        if(i < 36){
+            cell.classList.add("red");
+        }
+
+        if(i >= 189){
+            cell.classList.add("blue");
+        }
+
+        board.appendChild(cell);
+    }
+
+    const firstCell = board.children[32];
+
+    const piece = document.createElement("div");
+
+    piece.className = "piece redPiece";
+
+    piece.id = "redPiece";
+
+    firstCell.appendChild(piece);
+}
+
+function rollDice(){
+
+    const number = Math.floor(Math.random() * 6) + 1;
+
+    dice.textContent = faces[number];
+
+    movePiece(number);
+}
+
+function movePiece(number){
+
+    const piece = document.getElementById("redPiece");
+
+    position += number;
+
+    if(position > 20){
+        position = 20;
+    }
+
+    const board = document.getElementById("board");
+
+    const start = 32;
+
+    const newCell = board.children[start + position];
+
+    if(newCell){
+        newCell.appendChild(piece);
+    }
+}
+
+createBoard();
+
+</script>
+
+</body>
+</html>
