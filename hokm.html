@@ -637,13 +637,22 @@ document.getElementById("info").textContent =
     setTimeout(function() {
 
       currentTrick = [];
-      leadSuit = "";
+leadSuit = "";
 
-      showCurrentTrick();
+showCurrentTrick();
 
-      document.getElementById("info").textContent =
-        "🎴 نوبت شماست؛ یک کارت انتخاب کنید.";
+if (trickLeader === "شما") {
 
+  showMyHand();
+
+} else {
+
+  document.getElementById("info").textContent =
+    "🎴 نوبت " + trickLeader + " است.";
+
+  playNextPlayer();
+
+    }
     }, 1500);
 
   }
