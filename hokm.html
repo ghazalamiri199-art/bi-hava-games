@@ -681,7 +681,54 @@ function playNextPlayer() {
     }, 1500);
 
   }
+function findTrickWinner() {
 
+  const lead = currentTrick[0].card.suit;
+
+  let winner = currentTrick[0];
+
+  for (let i = 1; i < currentTrick.length; i++) {
+
+    const current = currentTrick[i];
+
+    if (
+      current.card.suit === trump &&
+      winner.card.suit !== trump
+    ) {
+      winner = current;
+      continue;
+    }
+
+    if (
+      current.card.suit === winner.card.suit &&
+      current.card.suit === trump
+    ) {
+      if (
+        ranks.indexOf(current.card.rank) <
+        ranks.indexOf(winner.card.rank)
+      ) {
+        winner = current;
+      }
+      continue;
+    }
+
+    if (
+      winner.card.suit !== trump &&
+      current.card.suit === lead &&
+      winner.card.suit === lead
+    ) {
+      if (
+        ranks.indexOf(current.card.rank) <
+        ranks.indexOf(winner.card.rank)
+      ) {
+        winner = current;
+      }
+    }
+
+  }
+
+  return winner.player;
+    
     }
   </script>
 
