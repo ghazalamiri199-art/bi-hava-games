@@ -42,47 +42,21 @@ h1{
 
 .cell{
     border:1px solid #aaa;
-    background:#eeeeee;
+    background:#eee;
     display:flex;
     align-items:center;
     justify-content:center;
 }
 
-.redHome{
-    background:#e53935;
-}
+.redHome{background:#e53935;}
+.greenHome{background:#43a047;}
+.yellowHome{background:#fbc02d;}
+.blueHome{background:#1e88e5;}
 
-.greenHome{
-    background:#43a047;
-}
-
-.yellowHome{
-    background:#fbc02d;
-}
-
-.blueHome{
-    background:#1e88e5;
-}
-
-.path{
-    background:#ffffff;
-}
-
-.redPath{
-    background:#ef9a9a;
-}
-
-.greenPath{
-    background:#a5d6a7;
-}
-
-.yellowPath{
-    background:#fff59d;
-}
-
-.bluePath{
-    background:#90caf9;
-}
+.redPath{background:#ef9a9a;}
+.greenPath{background:#a5d6a7;}
+.yellowPath{background:#fff59d;}
+.bluePath{background:#90caf9;}
 
 .center{
     background:white;
@@ -97,23 +71,13 @@ h1{
     border-radius:50%;
     border:3px solid white;
     box-shadow:0 2px 5px #222;
+    transition:0.3s;
 }
 
-.redPiece{
-    background:#b71c1c;
-}
-
-.greenPiece{
-    background:#1b5e20;
-}
-
-.yellowPiece{
-    background:#f57f17;
-}
-
-.bluePiece{
-    background:#0d47a1;
-}
+.redPiece{background:#b71c1c;}
+.greenPiece{background:#1b5e20;}
+.yellowPiece{background:#f57f17;}
+.bluePiece{background:#0d47a1;}
 
 #dice{
     font-size:55px;
@@ -148,22 +112,10 @@ button{
     font-size:14px;
 }
 
-.p-red{
-    background:#e53935;
-}
-
-.p-green{
-    background:#43a047;
-}
-
-.p-yellow{
-    background:#fbc02d;
-    color:#111;
-}
-
-.p-blue{
-    background:#1e88e5;
-}
+.p-red{background:#e53935;}
+.p-green{background:#43a047;}
+.p-yellow{background:#fbc02d;color:#111;}
+.p-blue{background:#1e88e5;}
 </style>
 </head>
 
@@ -201,6 +153,7 @@ const names = [
 ];
 
 let currentPlayer = 0;
+let redPosition = 0;
 
 function createBoard(){
 
@@ -211,7 +164,7 @@ function createBoard(){
         for(let col=0; col<15; col++){
 
             const cell = document.createElement("div");
-            cell.className = "cell path";
+            cell.className = "cell";
 
             if(row < 6 && col < 6){
                 cell.className = "cell redHome";
@@ -222,111 +175,3 @@ function createBoard(){
             else if(row > 8 && col < 6){
                 cell.className = "cell blueHome";
             }
-            else if(row > 8 && col > 8){
-                cell.className = "cell yellowHome";
-            }
-            else if(row >= 6 && row <= 8 && col >= 6 && col <= 8){
-
-                cell.className = "cell center";
-
-                if(row === 7 && col === 7){
-                    cell.textContent = "منچ 🎯";
-                }
-            }
-
-            if(row === 6 && col >= 1 && col <= 5){
-                cell.className = "cell redPath";
-            }
-
-            if(col === 8 && row >= 1 && row <= 5){
-                cell.className = "cell greenPath";
-            }
-
-            if(row === 8 && col >= 9 && col <= 13){
-                cell.className = "cell yellowPath";
-            }
-
-            if(col === 6 && row >= 9 && row <= 13){
-                cell.className = "cell bluePath";
-            }
-
-            board.appendChild(cell);
-        }
-    }
-
-    addPieces();
-}
-
-function addPieces(){
-
-    const pieces = [
-        {row:2,col:2,color:"redPiece"},
-        {row:2,col:4,color:"redPiece"},
-        {row:4,col:2,color:"redPiece"},
-        {row:4,col:4,color:"redPiece"},
-
-        {row:2,col:10,color:"greenPiece"},
-        {row:2,col:12,color:"greenPiece"},
-        {row:4,col:10,color:"greenPiece"},
-        {row:4,col:12,color:"greenPiece"},
-
-        {row:10,col:2,color:"bluePiece"},
-        {row:10,col:4,color:"bluePiece"},
-        {row:12,col:2,color:"bluePiece"},
-        {row:12,col:4,color:"bluePiece"},
-
-        {row:10,col:10,color:"yellowPiece"},
-        {row:10,col:12,color:"yellowPiece"},
-        {row:12,col:10,color:"yellowPiece"},
-        {row:12,col:12,color:"yellowPiece"}
-    ];
-
-    pieces.forEach(item => {
-
-        const index = item.row * 15 + item.col;
-        const cell = board.children[index];
-
-        const piece = document.createElement("div");
-        piece.className = "piece " + item.color;
-
-        cell.appendChild(piece);
-    });
-}
-
-function rollDice(){
-
-    const number = Math.floor(Math.random()*6)+1;
-
-    const diceFaces = [
-        "",
-        "⚀",
-        "⚁",
-        "⚂",
-        "⚃",
-        "⚄",
-        "⚅"
-    ];
-
-    dice.textContent = diceFaces[number];
-
-    if(number !== 6){
-
-        currentPlayer++;
-
-        if(currentPlayer >= 4){
-            currentPlayer = 0;
-        }
-    }
-
-    turnText.textContent =
-        "نوبت بازیکن " + names[currentPlayer];
-}
-
-rollButton.addEventListener("click", rollDice);
-
-createBoard();
-
-</script>
-
-</body>
-</html>
