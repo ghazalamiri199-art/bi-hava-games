@@ -41,6 +41,9 @@ h1{
 .cell{
     border:1px solid #bbb;
     background:#eee;
+    display:flex;
+    align-items:center;
+    justify-content:center;
 }
 
 .red{background:#e53935}
@@ -48,11 +51,20 @@ h1{
 .yellow{background:#fbc02d}
 .blue{background:#1e88e5}
 
+.home{
+    position:relative;
+}
+
+.piece{
+    width:65%;
+    height:65%;
+    border-radius:50%;
+    border:3px solid white;
+    box-shadow:0 2px 5px #222;
+}
+
 .center{
     background:white;
-    display:flex;
-    align-items:center;
-    justify-content:center;
     color:#222;
     font-size:12px;
     font-weight:bold;
@@ -73,7 +85,7 @@ button{
 }
 
 #roll{
-    background:#fff;
+    background:white;
     color:#111;
 }
 
@@ -94,120 +106,4 @@ button{
 .p-red{background:#e53935}
 .p-green{background:#43a047}
 .p-yellow{background:#fbc02d;color:#111}
-.p-blue{background:#1e88e5}
-</style>
-</head>
-
-<body>
-
-<h1>🎮 Bi Hava Games</h1>
-
-<div id="turn">نوبت بازیکن قرمز ❤️</div>
-
-<div class="board" id="board"></div>
-
-<div id="dice">🎲</div>
-
-<button id="roll">انداختن تاس</button>
-
-<div class="players">
-    <div class="player p-red">❤️ قرمز</div>
-    <div class="player p-green">💚 سبز</div>
-    <div class="player p-yellow">💛 زرد</div>
-    <div class="player p-blue">💙 آبی</div>
-</div>
-
-<script>
-
-const board = document.getElementById("board");
-const turnText = document.getElementById("turn");
-const dice = document.getElementById("dice");
-const rollButton = document.getElementById("roll");
-
-const names = [
-    "قرمز ❤️",
-    "سبز 💚",
-    "زرد 💛",
-    "آبی 💙"
-];
-
-let currentPlayer = 0;
-
-function createBoard(){
-
-    board.innerHTML = "";
-
-    for(let row=0; row<15; row++){
-
-        for(let col=0; col<15; col++){
-
-            const cell = document.createElement("div");
-            cell.className = "cell";
-
-            if(row < 6 && col < 6){
-                cell.classList.add("red");
-            }
-
-            if(row < 6 && col > 8){
-                cell.classList.add("green");
-            }
-
-            if(row > 8 && col < 6){
-                cell.classList.add("blue");
-            }
-
-            if(row > 8 && col > 8){
-                cell.classList.add("yellow");
-            }
-
-            if(row >= 6 && row <= 8 &&
-               col >= 6 && col <= 8){
-
-                cell.className = "cell center";
-
-                if(row === 7 && col === 7){
-                    cell.textContent = "منچ 🎯";
-                }
-            }
-
-            board.appendChild(cell);
-        }
-    }
-}
-
-function rollDice(){
-
-    const number = Math.floor(Math.random()*6)+1;
-
-    const diceFaces = [
-        "",
-        "⚀",
-        "⚁",
-        "⚂",
-        "⚃",
-        "⚄",
-        "⚅"
-    ];
-
-    dice.textContent = diceFaces[number];
-
-    if(number !== 6){
-        currentPlayer++;
-
-        if(currentPlayer >= 4){
-            currentPlayer = 0;
-        }
-    }
-
-    turnText.textContent =
-        "نوبت بازیکن " + names[currentPlayer];
-}
-
-rollButton.addEventListener("click", rollDice);
-
-createBoard();
-
-</script>
-
-</body>
- </html>
+.p-blue{background:#1e
