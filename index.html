@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Bi Hava Games - منچ</title>
 
 <style>
@@ -20,6 +21,7 @@ body{
 
 h1{
     margin:15px 0 5px;
+    font-size:27px;
 }
 
 #turn{
@@ -47,43 +49,15 @@ h1{
     background:white;
 }
 
-/* خانه های بازیکنان */
+.redHome{background:#e53935;}
+.greenHome{background:#43a047;}
+.yellowHome{background:#fbc02d;}
+.blueHome{background:#1e88e5;}
 
-.redHome{
-    background:#e53935;
-}
-
-.greenHome{
-    background:#43a047;
-}
-
-.yellowHome{
-    background:#fbc02d;
-}
-
-.blueHome{
-    background:#1e88e5;
-}
-
-/* خانه های مسیر */
-
-.redPath{
-    background:#ffcdd2;
-}
-
-.greenPath{
-    background:#c8e6c9;
-}
-
-.yellowPath{
-    background:#fff9c4;
-}
-
-.bluePath{
-    background:#bbdefb;
-}
-
-/* مرکز */
+.redPath{background:#ffcdd2;}
+.greenPath{background:#c8e6c9;}
+.yellowPath{background:#fff9c4;}
+.bluePath{background:#bbdefb;}
 
 .center{
     background:white;
@@ -92,31 +66,19 @@ h1{
     font-weight:bold;
 }
 
-/* مهره ها */
-
 .piece{
     width:65%;
     height:65%;
     border-radius:50%;
     border:3px solid white;
     box-shadow:0 2px 5px #333;
+    z-index:5;
 }
 
-.redPiece{
-    background:#8b0000;
-}
-
-.greenPiece{
-    background:#1b5e20;
-}
-
-.yellowPiece{
-    background:#f57f17;
-}
-
-.bluePiece{
-    background:#0d47a1;
-}
+.redPiece{background:#8b0000;}
+.greenPiece{background:#1b5e20;}
+.yellowPiece{background:#f57f17;}
+.bluePiece{background:#0d47a1;}
 
 #dice{
     font-size:60px;
@@ -129,6 +91,7 @@ button{
     border-radius:12px;
     font-size:18px;
     font-weight:bold;
+    cursor:pointer;
 }
 
 .players{
@@ -144,22 +107,10 @@ button{
     border-radius:10px;
 }
 
-.p-red{
-    background:#e53935;
-}
-
-.p-green{
-    background:#43a047;
-}
-
-.p-yellow{
-    background:#fbc02d;
-    color:#111;
-}
-
-.p-blue{
-    background:#1e88e5;
-}
+.p-red{background:#e53935;}
+.p-green{background:#43a047;}
+.p-yellow{background:#fbc02d;color:#111;}
+.p-blue{background:#1e88e5;}
 </style>
 </head>
 
@@ -180,28 +131,70 @@ button{
 </button>
 
 <div class="players">
-
-<div class="player p-red">
-❤️ قرمز
-</div>
-
-<div class="player p-green">
-💚 سبز
-</div>
-
-<div class="player p-yellow">
-💛 زرد
-</div>
-
-<div class="player p-blue">
-💙 آبی
-</div>
-
+<div class="player p-red">❤️ قرمز</div>
+<div class="player p-green">💚 سبز</div>
+<div class="player p-yellow">💛 زرد</div>
+<div class="player p-blue">💙 آبی</div>
 </div>
 
 <script>
 
 const board = document.getElementById("board");
+
+let redPosition = 0;
+
+/* مسیر حرکت مهره قرمز */
+
+const path = [
+    [6,1],
+    [6,2],
+    [6,3],
+    [6,4],
+    [6,5],
+    [6,6],
+    [5,6],
+    [4,6],
+    [3,6],
+    [2,6],
+    [1,6],
+    [1,7],
+    [1,8],
+    [2,8],
+    [3,8],
+    [4,8],
+    [5,8],
+    [6,8],
+    [6,9],
+    [6,10],
+    [6,11],
+    [6,12],
+    [6,13],
+    [7,13],
+    [8,13],
+    [8,12],
+    [8,11],
+    [8,10],
+    [8,9],
+    [8,8],
+    [9,8],
+    [10,8],
+    [11,8],
+    [12,8],
+    [13,8],
+    [13,7],
+    [13,6],
+    [12,6],
+    [11,6],
+    [10,6],
+    [9,6],
+    [8,6],
+    [8,5],
+    [8,4],
+    [8,3],
+    [8,2],
+    [8,1],
+    [7,1]
+];
 
 function createBoard(){
 
@@ -213,55 +206,37 @@ function createBoard(){
 
             cell.className = "cell";
 
-            /* خانه قرمز */
-
             if(row < 6 && col < 6){
                 cell.classList.add("redHome");
             }
-
-            /* خانه سبز */
 
             else if(row < 6 && col > 8){
                 cell.classList.add("greenHome");
             }
 
-            /* خانه آبی */
-
             else if(row > 8 && col < 6){
                 cell.classList.add("blueHome");
             }
-
-            /* خانه زرد */
 
             else if(row > 8 && col > 8){
                 cell.classList.add("yellowHome");
             }
 
-            /* مسیر قرمز */
-
             if(row == 6 && col >= 1 && col <= 5){
                 cell.className = "cell redPath";
             }
-
-            /* مسیر سبز */
 
             if(col == 8 && row >= 1 && row <= 5){
                 cell.className = "cell greenPath";
             }
 
-            /* مسیر زرد */
-
             if(row == 8 && col >= 9 && col <= 13){
                 cell.className = "cell yellowPath";
             }
 
-            /* مسیر آبی */
-
             if(col == 6 && row >= 9 && row <= 13){
                 cell.className = "cell bluePath";
             }
-
-            /* مرکز */
 
             if(row >= 6 && row <= 8 &&
                col >= 6 && col <= 8){
@@ -284,41 +259,59 @@ function addPieces(){
 
     const pieces = [
 
-        [2,2,"redPiece"],
-        [2,4,"redPiece"],
-        [4,2,"redPiece"],
-        [4,4,"redPiece"],
+        [2,2,"redPiece","red1"],
+        [2,4,"redPiece","red2"],
+        [4,2,"redPiece","red3"],
+        [4,4,"redPiece","red4"],
 
-        [2,10,"greenPiece"],
-        [2,12,"greenPiece"],
-        [4,10,"greenPiece"],
-        [4,12,"greenPiece"],
+        [2,10,"greenPiece","green1"],
+        [2,12,"greenPiece","green2"],
+        [4,10,"greenPiece","green3"],
+        [4,12,"greenPiece","green4"],
 
-        [10,2,"bluePiece"],
-        [10,4,"bluePiece"],
-        [12,2,"bluePiece"],
-        [12,4,"bluePiece"],
+        [10,2,"bluePiece","blue1"],
+        [10,4,"bluePiece","blue2"],
+        [12,2,"bluePiece","blue3"],
+        [12,4,"bluePiece","blue4"],
 
-        [10,10,"yellowPiece"],
-        [10,12,"yellowPiece"],
-        [12,10,"yellowPiece"],
-        [12,12,"yellowPiece"]
+        [10,10,"yellowPiece","yellow1"],
+        [10,12,"yellowPiece","yellow2"],
+        [12,10,"yellowPiece","yellow3"],
+        [12,12,"yellowPiece","yellow4"]
     ];
 
     pieces.forEach(p => {
 
         const row = p[0];
         const col = p[1];
-        const color = p[2];
 
         const index = row * 15 + col;
 
         const piece = document.createElement("div");
 
-        piece.className = "piece " + color;
+        piece.className = "piece " + p[2];
+        piece.id = p[3];
 
         board.children[index].appendChild(piece);
     });
+}
+
+function moveRedPiece(steps){
+
+    const piece = document.getElementById("red1");
+
+    redPosition += steps;
+
+    if(redPosition >= path.length){
+        redPosition = path.length - 1;
+    }
+
+    const row = path[redPosition][0];
+    const col = path[redPosition][1];
+
+    const index = row * 15 + col;
+
+    board.children[index].appendChild(piece);
 }
 
 function rollDice(){
@@ -338,6 +331,8 @@ function rollDice(){
 
     document.getElementById("dice").textContent =
         faces[number];
+
+    moveRedPiece(number);
 }
 
 createBoard();
