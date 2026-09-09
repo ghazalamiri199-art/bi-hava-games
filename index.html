@@ -3,10 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Bi Hava Games - Ludo</title>
 
 <style>
-*{box-sizing:border-box}
+*{
+    box-sizing:border-box;
+}
 
 body{
     margin:0;
@@ -16,7 +19,9 @@ body{
     text-align:center;
 }
 
-h1{margin:12px 0 4px}
+h1{
+    margin:12px 0 4px;
+}
 
 #turn{
     margin:8px;
@@ -45,26 +50,67 @@ h1{margin:12px 0 4px}
     background:white;
 }
 
-.redHome{background:#e53935}
-.greenHome{background:#43a047}
-.yellowHome{background:#fbc02d}
-.blueHome{background:#1e88e5}
+.redHome{
+    background:#e53935;
+}
 
-.redPath{background:#ffcdd2}
-.greenPath{background:#c8e6c9}
-.yellowPath{background:#fff9c4}
-.bluePath{background:#bbdefb}
+.greenHome{
+    background:#43a047;
+}
+
+.yellowHome{
+    background:#fbc02d;
+}
+
+.blueHome{
+    background:#1e88e5;
+}
+
+.redPath{
+    background:#ffcdd2;
+}
+
+.greenPath{
+    background:#c8e6c9;
+}
+
+.yellowPath{
+    background:#fff9c4;
+}
+
+.bluePath{
+    background:#bbdefb;
+}
+
+/* خانه‌های امن */
 
 .safe{
-    background:#eeeeee !important;
+    font-weight:bold;
+}
+
+.safeRed{
+    background:#ef5350 !important;
+}
+
+.safeGreen{
+    background:#66bb6a !important;
+}
+
+.safeYellow{
+    background:#ffd740 !important;
+}
+
+.safeBlue{
+    background:#42a5f5 !important;
 }
 
 .safe::after{
     content:"★";
     position:absolute;
-    font-size:14px;
-    color:#555;
-    z-index:1;
+    font-size:18px;
+    color:white;
+    text-shadow:0 1px 3px #333;
+    z-index:2;
 }
 
 .center{
@@ -85,10 +131,21 @@ h1{margin:12px 0 4px}
     z-index:5;
 }
 
-.redPiece{background:#8b0000}
-.greenPiece{background:#1b5e20}
-.yellowPiece{background:#f57f17}
-.bluePiece{background:#0d47a1}
+.redPiece{
+    background:#8b0000;
+}
+
+.greenPiece{
+    background:#1b5e20;
+}
+
+.yellowPiece{
+    background:#f57f17;
+}
+
+.bluePiece{
+    background:#0d47a1;
+}
 
 .selected{
     transform:scale(1.2);
@@ -123,10 +180,22 @@ button{
     font-size:14px;
 }
 
-.p-red{background:#e53935}
-.p-green{background:#43a047}
-.p-yellow{background:#fbc02d;color:#111}
-.p-blue{background:#1e88e5}
+.p-red{
+    background:#e53935;
+}
+
+.p-green{
+    background:#43a047;
+}
+
+.p-yellow{
+    background:#fbc02d;
+    color:#111;
+}
+
+.p-blue{
+    background:#1e88e5;
+}
 </style>
 </head>
 
@@ -134,19 +203,38 @@ button{
 
 <h1>🎮 Bi Hava Games</h1>
 
-<div id="turn">نوبت بازیکن قرمز ❤️</div>
+<div id="turn">
+نوبت بازیکن قرمز ❤️
+</div>
 
 <div class="board" id="board"></div>
 
-<div id="dice">🎲</div>
+<div id="dice">
+🎲
+</div>
 
-<button onclick="rollDice()">انداختن تاس 🎲</button>
+<button onclick="rollDice()">
+انداختن تاس 🎲
+</button>
 
 <div class="players">
-<div class="player p-red">❤️ قرمز</div>
-<div class="player p-green">💚 سبز</div>
-<div class="player p-yellow">💛 زرد</div>
-<div class="player p-blue">💙 آبی</div>
+
+<div class="player p-red">
+❤️ قرمز
+</div>
+
+<div class="player p-green">
+💚 سبز
+</div>
+
+<div class="player p-yellow">
+💛 زرد
+</div>
+
+<div class="player p-blue">
+💙 آبی
+</div>
+
 </div>
 
 <script>
@@ -159,50 +247,106 @@ let currentPlayer=0;
 let diceNumber=0;
 let selectedPiece=null;
 
+/* مسیر اصلی */
+
 const path=[
+
 [6,1],[6,2],[6,3],[6,4],[6,5],[6,6],
+
 [5,6],[4,6],[3,6],[2,6],[1,6],
+
 [1,7],[1,8],
+
 [2,8],[3,8],[4,8],[5,8],[6,8],
+
 [6,9],[6,10],[6,11],[6,12],[6,13],
+
 [7,13],[8,13],
+
 [8,12],[8,11],[8,10],[8,9],[8,8],
+
 [9,8],[10,8],[11,8],[12,8],[13,8],
+
 [13,7],[13,6],
+
 [12,6],[11,6],[10,6],[9,6],[8,6],
+
 [8,5],[8,4],[8,3],[8,2],[8,1],
+
 [7,1]
+
 ];
 
-/* خانه‌های امن */
-const safePositions=[
+/*
+خانه‌های امن
+
+0  = قرمز
+13 = سبز
+26 = زرد
+39 = آبی
+
+چهار خانه دیگر هم امن هستند.
+*/
+
+const safePositions={
+    red:[0,47],
+    green:[13,8],
+    yellow:[26,21],
+    blue:[39,34]
+};
+
+/* تبدیل همه خانه‌های امن به یک لیست */
+
+const allSafePositions=[
     0,8,13,21,26,34,39,47
 ];
 
+const safeColors={
+
+    0:"safeRed",
+    47:"safeRed",
+
+    13:"safeGreen",
+    8:"safeGreen",
+
+    26:"safeYellow",
+    21:"safeYellow",
+
+    39:"safeBlue",
+    34:"safeBlue"
+};
+
 const players=[
-    {
-        name:"قرمز ❤️",
-        color:"red",
-        pieceClass:"redPiece"
-    },
-    {
-        name:"سبز 💚",
-        color:"green",
-        pieceClass:"greenPiece"
-    },
-    {
-        name:"زرد 💛",
-        color:"yellow",
-        pieceClass:"yellowPiece"
-    },
-    {
-        name:"آبی 💙",
-        color:"blue",
-        pieceClass:"bluePiece"
-    }
+
+{
+    name:"قرمز ❤️",
+    color:"red",
+    pieceClass:"redPiece"
+},
+
+{
+    name:"سبز 💚",
+    color:"green",
+    pieceClass:"greenPiece"
+},
+
+{
+    name:"زرد 💛",
+    color:"yellow",
+    pieceClass:"yellowPiece"
+},
+
+{
+    name:"آبی 💙",
+    color:"blue",
+    pieceClass:"bluePiece"
+}
+
 ];
 
 const pieces={};
+
+/* ساخت صفحه */
 
 function createBoard(){
 
@@ -238,8 +382,12 @@ function createBoard(){
             if(col==6 && row>=9 && row<=13)
                 cell.className="cell bluePath";
 
-            if(row>=6 && row<=8 &&
-               col>=6 && col<=8){
+            if(
+                row>=6 &&
+                row<=8 &&
+                col>=6 &&
+                col<=8
+            ){
 
                 cell.className="cell center";
 
@@ -251,33 +399,59 @@ function createBoard(){
         }
     }
 
-    /* مشخص کردن خانه‌های امن */
-    safePositions.forEach(position=>{
+    /* گذاشتن خانه‌های امن */
+
+    allSafePositions.forEach(position=>{
 
         const pos=path[position];
+
         const index=pos[0]*15+pos[1];
 
-        board.children[index].classList.add("safe");
+        const cell=board.children[index];
+
+        cell.classList.add("safe");
+
+        cell.classList.add(safeColors[position]);
+
     });
 
     createPieces();
 }
 
+/* ساخت ۱۶ مهره */
+
 function createPieces(){
 
     const homes={
+
         red:[
-            [2,2],[2,4],[4,2],[4,4]
+            [2,2],
+            [2,4],
+            [4,2],
+            [4,4]
         ],
+
         green:[
-            [2,10],[2,12],[4,10],[4,12]
+            [2,10],
+            [2,12],
+            [4,10],
+            [4,12]
         ],
+
         blue:[
-            [10,2],[10,4],[12,2],[12,4]
+            [10,2],
+            [10,4],
+            [12,2],
+            [12,4]
         ],
+
         yellow:[
-            [10,10],[10,12],[12,10],[12,12]
+            [10,10],
+            [10,12],
+            [12,10],
+            [12,12]
         ]
+
     };
 
     players.forEach((player,playerIndex)=>{
@@ -288,58 +462,87 @@ function createPieces(){
 
             const piece=document.createElement("div");
 
-            piece.className="piece "+player.pieceClass;
+            piece.className=
+                "piece "+player.pieceClass;
+
             piece.id=id;
 
             pieces[id]={
+
                 player:playerIndex,
+
                 position:-1
+
             };
 
             piece.onclick=function(){
 
-                if(pieces[id].player!==currentPlayer)
+                if(
+                    pieces[id].player!==currentPlayer
+                )
                     return;
 
                 if(selectedPiece)
                     selectedPiece.classList.remove("selected");
 
                 selectedPiece=piece;
+
                 piece.classList.add("selected");
 
                 turnText.textContent=
                     "مهره انتخاب شد ❤️ حالا تاس بنداز 🎲";
+
             };
 
-            const cellIndex=home[0]*15+home[1];
+            const cellIndex=
+                home[0]*15+home[1];
 
-            board.children[cellIndex].appendChild(piece);
+            board.children[cellIndex]
+                .appendChild(piece);
+
         });
+
     });
+
 }
+
+/* تاس */
 
 function rollDice(){
 
-    diceNumber=Math.floor(Math.random()*6)+1;
+    diceNumber=
+        Math.floor(Math.random()*6)+1;
 
     const faces=[
         "",
-        "⚀","⚁","⚂","⚃","⚄","⚅"
+        "⚀",
+        "⚁",
+        "⚂",
+        "⚃",
+        "⚄",
+        "⚅"
     ];
 
-    dice.textContent=faces[diceNumber];
+    dice.textContent=
+        faces[diceNumber];
 
     if(selectedPiece){
 
         moveSelectedPiece();
 
-    }else{
+    }
+    else{
 
         turnText.textContent=
-        "اول یکی از ۴ مهره "+players[currentPlayer].name+
-        " را انتخاب کن 👆";
+            "اول یکی از ۴ مهره "+
+            players[currentPlayer].name+
+            " را انتخاب کن 👆";
+
     }
+
 }
+
+/* حرکت مهره */
 
 function moveSelectedPiece(){
 
@@ -357,11 +560,16 @@ function moveSelectedPiece(){
 
     const pos=path[data.position];
 
-    const cellIndex=pos[0]*15+pos[1];
+    const cellIndex=
+        pos[0]*15+pos[1];
 
-    const targetCell=board.children[cellIndex];
+    const targetCell=
+        board.children[cellIndex];
 
-    /* بررسی مهره‌های حریف */
+    /*
+    بررسی مهره‌های حریف
+    */
+
     const enemyPieces=[];
 
     Object.keys(pieces).forEach(otherId=>{
@@ -375,12 +583,21 @@ function moveSelectedPiece(){
             other.position===data.position &&
             other.player!==data.player
         ){
+
             enemyPieces.push(otherId);
+
         }
+
     });
 
-    /* اگر خانه امن نباشد، مهره حریف کشته می‌شود */
-    if(!safePositions.includes(data.position)){
+    /*
+    اگر خانه امن نباشد،
+    مهره حریف کشته می‌شود.
+    */
+
+    if(
+        !allSafePositions.includes(data.position)
+    ){
 
         enemyPieces.forEach(enemyId=>{
 
@@ -388,24 +605,55 @@ function moveSelectedPiece(){
 
             enemy.position=-1;
 
-            const enemyColor=players[enemy.player].color;
+            const enemyColor=
+                players[enemy.player].color;
 
             const homePositions={
-                red:[[2,2],[2,4],[4,2],[4,4]],
-                green:[[2,10],[2,12],[4,10],[4,12]],
-                blue:[[10,2],[10,4],[12,2],[12,4]],
-                yellow:[[10,10],[10,12],[12,10],[12,12]]
+
+                red:[
+                    [2,2],
+                    [2,4],
+                    [4,2],
+                    [4,4]
+                ],
+
+                green:[
+                    [2,10],
+                    [2,12],
+                    [4,10],
+                    [4,12]
+                ],
+
+                blue:[
+                    [10,2],
+                    [10,4],
+                    [12,2],
+                    [12,4]
+                ],
+
+                yellow:[
+                    [10,10],
+                    [10,12],
+                    [12,10],
+                    [12,12]
+                ]
+
             };
 
-            const enemyIndex=parseInt(enemyId.slice(-1))-1;
+            const enemyIndex=
+                parseInt(enemyId.slice(-1))-1;
 
-            const home=homePositions[enemyColor][enemyIndex];
+            const home=
+                homePositions[enemyColor][enemyIndex];
 
-            const homeCellIndex=home[0]*15+home[1];
+            const homeCellIndex=
+                home[0]*15+home[1];
 
-            board.children[homeCellIndex].appendChild(
-                document.getElementById(enemyId)
-            );
+            board.children[homeCellIndex]
+                .appendChild(
+                    document.getElementById(enemyId)
+                );
+
         });
 
         if(enemyPieces.length>0){
@@ -414,6 +662,22 @@ function moveSelectedPiece(){
                 "💥 مهره حریف زده شد!";
 
         }
+
+    }
+    else{
+
+        /*
+        خانه امن است؛
+        مهره حریف کشته نمی‌شود.
+        */
+
+        if(enemyPieces.length>0){
+
+            turnText.textContent=
+                "🛡️ خانه امن است؛ مهره حریف در امان ماند!";
+
+        }
+
     }
 
     targetCell.appendChild(selectedPiece);
@@ -422,20 +686,25 @@ function moveSelectedPiece(){
 
     selectedPiece=null;
 
+    /* تغییر نوبت */
+
     if(diceNumber!==6){
 
         currentPlayer++;
 
         if(currentPlayer>=4)
             currentPlayer=0;
+
     }
 
     setTimeout(()=>{
 
         turnText.textContent=
-            "نوبت بازیکن "+players[currentPlayer].name;
+            "نوبت بازیکن "+
+            players[currentPlayer].name;
 
-    },700);
+    },900);
+
 }
 
 createBoard();
