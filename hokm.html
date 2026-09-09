@@ -274,6 +274,7 @@
     let currentTrick = [];
     let leadSuit = "";
 let trickLeader = "شما";
+    let currentPlayer = "شما";
     function createDeck() {
 
       deck = [];
@@ -473,8 +474,17 @@ let trickLeader = "شما";
         }
       );
 
-      document.getElementById("info").textContent =
-        "🎴 نوبت شماست؛ یک کارت انتخاب کنید.";
+  if (currentPlayer === "شما") {
+
+  document.getElementById("info").textContent =
+    "🎴 نوبت شماست؛ یک کارت انتخاب کنید.";
+
+} else {
+
+  document.getElementById("info").textContent =
+    "🎴 نوبت " + currentPlayer + " است.";
+
+    }
 
     }
 
@@ -516,7 +526,11 @@ let trickLeader = "شما";
       });
 
       hands["شما"].splice(index, 1);
-
+currentPlayer =
+  players[
+    (players.indexOf(currentPlayer) + 1)
+    % players.length
+  ];
       showCurrentTrick();
 playNextPlayer();
       document.getElementById("info").textContent =
@@ -578,11 +592,8 @@ playNextPlayer();
     return;
   }
 
-  const nextPlayer =
-    players[
-      (players.indexOf(trickLeader) + currentTrick.length)
-      % players.length
-    ];
+const nextPlayer =
+  currentPlayer;
     
 
   if (nextPlayer === "شما") {
@@ -610,14 +621,20 @@ playNextPlayer();
     ];
 
   const cardIndex =
-    hands[nextPlayer].indexOf(randomCard);
+  hands[nextPlayer].indexOf(randomCard);
 
-  hands[nextPlayer].splice(cardIndex, 1);
+hands[nextPlayer].splice(cardIndex, 1);
 
-  currentTrick.push({
-    player: nextPlayer,
-    card: randomCard
-  });
+currentTrick.push({
+  player: nextPlayer,
+  card: randomCard
+});
+
+currentPlayer =
+  players[
+    (players.indexOf(currentPlayer) + 1)
+    % players.length
+  ];
 
   showCurrentTrick();
 
@@ -631,6 +648,7 @@ playNextPlayer();
 
     const winner = findTrickWinner();
 trickLeader = winner;
+    currentPlayer = winner;
 document.getElementById("info").textContent =
   "🏆 برنده این دور: " + winner;
 
