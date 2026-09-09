@@ -16,9 +16,7 @@ body{
     text-align:center;
 }
 
-h1{
-    margin:12px 0 4px;
-}
+h1{margin:12px 0 4px}
 
 #turn{
     margin:8px;
@@ -56,6 +54,18 @@ h1{
 .greenPath{background:#c8e6c9}
 .yellowPath{background:#fff9c4}
 .bluePath{background:#bbdefb}
+
+.safe{
+    background:#eeeeee !important;
+}
+
+.safe::after{
+    content:"★";
+    position:absolute;
+    font-size:14px;
+    color:#555;
+    z-index:1;
+}
 
 .center{
     background:white;
@@ -149,8 +159,6 @@ let currentPlayer=0;
 let diceNumber=0;
 let selectedPiece=null;
 
-/* مسیر اصلی */
-
 const path=[
 [6,1],[6,2],[6,3],[6,4],[6,5],[6,6],
 [5,6],[4,6],[3,6],[2,6],[1,6],
@@ -166,7 +174,10 @@ const path=[
 [7,1]
 ];
 
-/* اطلاعات بازیکنان */
+/* خانه‌های امن */
+const safePositions=[
+    0,8,13,21,26,34,39,47
+];
 
 const players=[
     {
@@ -192,8 +203,6 @@ const players=[
 ];
 
 const pieces={};
-
-/* ساخت صفحه */
 
 function createBoard(){
 
@@ -242,10 +251,17 @@ function createBoard(){
         }
     }
 
+    /* مشخص کردن خانه‌های امن */
+    safePositions.forEach(position=>{
+
+        const pos=path[position];
+        const index=pos[0]*15+pos[1];
+
+        board.children[index].classList.add("safe");
+    });
+
     createPieces();
 }
-
-/* ساخت 16 مهره */
 
 function createPieces(){
 
@@ -290,6 +306,9 @@ function createPieces(){
 
                 selectedPiece=piece;
                 piece.classList.add("selected");
+
+                turnText.textContent=
+                    "مهره انتخاب شد ❤️ حالا تاس بنداز 🎲";
             };
 
             const cellIndex=home[0]*15+home[1];
@@ -298,8 +317,6 @@ function createPieces(){
         });
     });
 }
-
-/* تاس */
 
 function rollDice(){
 
@@ -324,8 +341,6 @@ function rollDice(){
     }
 }
 
-/* حرکت مهره انتخاب شده */
-
 function moveSelectedPiece(){
 
     const id=selectedPiece.id;
@@ -344,13 +359,68 @@ function moveSelectedPiece(){
 
     const cellIndex=pos[0]*15+pos[1];
 
-    board.children[cellIndex].appendChild(selectedPiece);
+    const targetCell=board.children[cellIndex];
+
+    /* بررسی مهره‌های حریف */
+    const enemyPieces=[];
+
+    Object.keys(pieces).forEach(otherId=>{
+
+        if(otherId===id)
+            return;
+
+        const other=pieces[otherId];
+
+        if(
+            other.position===data.position &&
+            other.player!==data.player
+        ){
+            enemyPieces.push(otherId);
+        }
+    });
+
+    /* اگر خانه امن نباشد، مهره حریف کشته می‌شود */
+    if(!safePositions.includes(data.position)){
+
+        enemyPieces.forEach(enemyId=>{
+
+            const enemy=pieces[enemyId];
+
+            enemy.position=-1;
+
+            const enemyColor=players[enemy.player].color;
+
+            const homePositions={
+                red:[[2,2],[2,4],[4,2],[4,4]],
+                green:[[2,10],[2,12],[4,10],[4,12]],
+                blue:[[10,2],[10,4],[12,2],[12,4]],
+                yellow:[[10,10],[10,12],[12,10],[12,12]]
+            };
+
+            const enemyIndex=parseInt(enemyId.slice(-1))-1;
+
+            const home=homePositions[enemyColor][enemyIndex];
+
+            const homeCellIndex=home[0]*15+home[1];
+
+            board.children[homeCellIndex].appendChild(
+                document.getElementById(enemyId)
+            );
+        });
+
+        if(enemyPieces.length>0){
+
+            turnText.textContent=
+                "💥 مهره حریف زده شد!";
+
+        }
+    }
+
+    targetCell.appendChild(selectedPiece);
 
     selectedPiece.classList.remove("selected");
 
     selectedPiece=null;
-
-    /* تغییر نوبت */
 
     if(diceNumber!==6){
 
@@ -360,8 +430,12 @@ function moveSelectedPiece(){
             currentPlayer=0;
     }
 
-    turnText.textContent=
-        "نوبت بازیکن "+players[currentPlayer].name;
+    setTimeout(()=>{
+
+        turnText.textContent=
+            "نوبت بازیکن "+players[currentPlayer].name;
+
+    },700);
 }
 
 createBoard();
