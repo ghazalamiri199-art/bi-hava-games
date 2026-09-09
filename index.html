@@ -6,7 +6,9 @@
 <title>Bi Hava Games - منچ</title>
 
 <style>
-*{box-sizing:border-box}
+*{
+    box-sizing:border-box;
+}
 
 body{
     margin:0;
@@ -17,20 +19,20 @@ body{
 }
 
 h1{
-    margin:18px 0 5px;
-    font-size:28px;
+    margin:15px 0 5px;
+    font-size:27px;
 }
 
 #turn{
-    font-size:18px;
-    margin:10px;
+    font-size:17px;
+    margin:8px;
 }
 
 .board{
-    width:92vw;
+    width:94vw;
     max-width:520px;
     aspect-ratio:1;
-    margin:15px auto;
+    margin:12px auto;
     display:grid;
     grid-template-columns:repeat(15,1fr);
     grid-template-rows:repeat(15,1fr);
@@ -39,28 +41,47 @@ h1{
 }
 
 .cell{
-    border:1px solid #bbb;
-    background:#eee;
+    border:1px solid #aaa;
+    background:#eeeeee;
     display:flex;
     align-items:center;
     justify-content:center;
 }
 
-.red{background:#e53935}
-.green{background:#43a047}
-.yellow{background:#fbc02d}
-.blue{background:#1e88e5}
-
-.home{
-    position:relative;
+.redHome{
+    background:#e53935;
 }
 
-.piece{
-    width:65%;
-    height:65%;
-    border-radius:50%;
-    border:3px solid white;
-    box-shadow:0 2px 5px #222;
+.greenHome{
+    background:#43a047;
+}
+
+.yellowHome{
+    background:#fbc02d;
+}
+
+.blueHome{
+    background:#1e88e5;
+}
+
+.path{
+    background:#ffffff;
+}
+
+.redPath{
+    background:#ef9a9a;
+}
+
+.greenPath{
+    background:#a5d6a7;
+}
+
+.yellowPath{
+    background:#fff59d;
+}
+
+.bluePath{
+    background:#90caf9;
 }
 
 .center{
@@ -70,9 +91,33 @@ h1{
     font-weight:bold;
 }
 
+.piece{
+    width:70%;
+    height:70%;
+    border-radius:50%;
+    border:3px solid white;
+    box-shadow:0 2px 5px #222;
+}
+
+.redPiece{
+    background:#b71c1c;
+}
+
+.greenPiece{
+    background:#1b5e20;
+}
+
+.yellowPiece{
+    background:#f57f17;
+}
+
+.bluePiece{
+    background:#0d47a1;
+}
+
 #dice{
     font-size:55px;
-    margin:10px;
+    margin:8px;
 }
 
 button{
@@ -92,18 +137,196 @@ button{
 .players{
     display:flex;
     justify-content:center;
-    gap:8px;
+    gap:7px;
     flex-wrap:wrap;
-    margin:15px;
+    margin:12px;
 }
 
 .player{
-    padding:8px 13px;
+    padding:8px 12px;
     border-radius:10px;
     font-size:14px;
 }
 
-.p-red{background:#e53935}
-.p-green{background:#43a047}
-.p-yellow{background:#fbc02d;color:#111}
-.p-blue{background:#1e
+.p-red{
+    background:#e53935;
+}
+
+.p-green{
+    background:#43a047;
+}
+
+.p-yellow{
+    background:#fbc02d;
+    color:#111;
+}
+
+.p-blue{
+    background:#1e88e5;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🎮 Bi Hava Games</h1>
+
+<div id="turn">نوبت بازیکن قرمز ❤️</div>
+
+<div class="board" id="board"></div>
+
+<div id="dice">🎲</div>
+
+<button id="roll">انداختن تاس</button>
+
+<div class="players">
+    <div class="player p-red">❤️ قرمز</div>
+    <div class="player p-green">💚 سبز</div>
+    <div class="player p-yellow">💛 زرد</div>
+    <div class="player p-blue">💙 آبی</div>
+</div>
+
+<script>
+
+const board = document.getElementById("board");
+const turnText = document.getElementById("turn");
+const dice = document.getElementById("dice");
+const rollButton = document.getElementById("roll");
+
+const names = [
+    "قرمز ❤️",
+    "سبز 💚",
+    "زرد 💛",
+    "آبی 💙"
+];
+
+let currentPlayer = 0;
+
+function createBoard(){
+
+    board.innerHTML = "";
+
+    for(let row=0; row<15; row++){
+
+        for(let col=0; col<15; col++){
+
+            const cell = document.createElement("div");
+            cell.className = "cell path";
+
+            if(row < 6 && col < 6){
+                cell.className = "cell redHome";
+            }
+            else if(row < 6 && col > 8){
+                cell.className = "cell greenHome";
+            }
+            else if(row > 8 && col < 6){
+                cell.className = "cell blueHome";
+            }
+            else if(row > 8 && col > 8){
+                cell.className = "cell yellowHome";
+            }
+            else if(row >= 6 && row <= 8 && col >= 6 && col <= 8){
+
+                cell.className = "cell center";
+
+                if(row === 7 && col === 7){
+                    cell.textContent = "منچ 🎯";
+                }
+            }
+
+            if(row === 6 && col >= 1 && col <= 5){
+                cell.className = "cell redPath";
+            }
+
+            if(col === 8 && row >= 1 && row <= 5){
+                cell.className = "cell greenPath";
+            }
+
+            if(row === 8 && col >= 9 && col <= 13){
+                cell.className = "cell yellowPath";
+            }
+
+            if(col === 6 && row >= 9 && row <= 13){
+                cell.className = "cell bluePath";
+            }
+
+            board.appendChild(cell);
+        }
+    }
+
+    addPieces();
+}
+
+function addPieces(){
+
+    const pieces = [
+        {row:2,col:2,color:"redPiece"},
+        {row:2,col:4,color:"redPiece"},
+        {row:4,col:2,color:"redPiece"},
+        {row:4,col:4,color:"redPiece"},
+
+        {row:2,col:10,color:"greenPiece"},
+        {row:2,col:12,color:"greenPiece"},
+        {row:4,col:10,color:"greenPiece"},
+        {row:4,col:12,color:"greenPiece"},
+
+        {row:10,col:2,color:"bluePiece"},
+        {row:10,col:4,color:"bluePiece"},
+        {row:12,col:2,color:"bluePiece"},
+        {row:12,col:4,color:"bluePiece"},
+
+        {row:10,col:10,color:"yellowPiece"},
+        {row:10,col:12,color:"yellowPiece"},
+        {row:12,col:10,color:"yellowPiece"},
+        {row:12,col:12,color:"yellowPiece"}
+    ];
+
+    pieces.forEach(item => {
+
+        const index = item.row * 15 + item.col;
+        const cell = board.children[index];
+
+        const piece = document.createElement("div");
+        piece.className = "piece " + item.color;
+
+        cell.appendChild(piece);
+    });
+}
+
+function rollDice(){
+
+    const number = Math.floor(Math.random()*6)+1;
+
+    const diceFaces = [
+        "",
+        "⚀",
+        "⚁",
+        "⚂",
+        "⚃",
+        "⚄",
+        "⚅"
+    ];
+
+    dice.textContent = diceFaces[number];
+
+    if(number !== 6){
+
+        currentPlayer++;
+
+        if(currentPlayer >= 4){
+            currentPlayer = 0;
+        }
+    }
+
+    turnText.textContent =
+        "نوبت بازیکن " + names[currentPlayer];
+}
+
+rollButton.addEventListener("click", rollDice);
+
+createBoard();
+
+</script>
+
+</body>
+</html>
