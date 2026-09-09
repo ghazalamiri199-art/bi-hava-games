@@ -489,7 +489,14 @@ let trickLeader = "شما";
     }
 
     function playMyCard(index) {
+if (currentPlayer !== "شما") {
 
+  document.getElementById("info").textContent =
+    "⏳ الان نوبت " + currentPlayer + " است.";
+
+  return;
+
+    }
       const card =
         hands["شما"][index];
 
