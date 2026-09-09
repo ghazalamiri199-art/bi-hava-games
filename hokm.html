@@ -572,7 +572,47 @@
       }
 
     }
+function playNextPlayer() {
 
+  const nextPlayer =
+    players[currentTrick.length];
+
+  if (nextPlayer === "شما") {
+    return;
+  }
+
+  const validCards =
+    hands[nextPlayer].filter(function(card) {
+
+      if (leadSuit === "") {
+        return true;
+      }
+
+      if (hasSuit(nextPlayer, leadSuit)) {
+        return card.suit === leadSuit;
+      }
+
+      return true;
+
+    });
+
+  const randomCard =
+    validCards[
+      Math.floor(Math.random() * validCards.length)
+    ];
+
+  const cardIndex =
+    hands[nextPlayer].indexOf(randomCard);
+
+  hands[nextPlayer].splice(cardIndex, 1);
+
+  currentTrick.push({
+    player: nextPlayer,
+    card: randomCard
+  });
+
+  showCurrentTrick();
+  }
   </script>
 
 </body>
