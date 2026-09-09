@@ -97,10 +97,21 @@
       font-size: 20px;
       font-weight: bold;
       box-shadow: 0 3px 7px rgba(0,0,0,0.4);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
     }
 
     .red {
       color: #d11;
+    }
+
+    .disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
     }
 
     button {
@@ -135,6 +146,25 @@
 
     .playerBox h3 {
       margin: 5px;
+    }
+
+    #myHandArea {
+      margin-top: 25px;
+    }
+
+    #myHand {
+      margin-top: 15px;
+    }
+
+    #playedCards {
+      margin-top: 25px;
+      min-height: 100px;
+    }
+
+    .message {
+      margin: 15px 0;
+      font-size: 18px;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -186,11 +216,25 @@
 
         </div>
 
-        <div id="info">
+        <div id="info" class="message">
           منتظر انتخاب حکم...
         </div>
 
-        <div id="playersCards"></div>
+        <div id="myHandArea" style="display:none;">
+
+          <h2>🎴 دست شما</h2>
+
+          <div id="myHand" class="cards"></div>
+
+        </div>
+
+        <div id="playedCards">
+
+          <h3>🃏 کارت‌های بازی‌شده</h3>
+
+          <div id="currentTrick" class="cards"></div>
+
+        </div>
 
       </div>
 
@@ -220,6 +264,16 @@
     let trump = "";
     let kingFirstFive = [];
 
+    let hands = {
+      "شما": [],
+      "بازیکن ۲": [],
+      "بازیکن ۳": [],
+      "بازیکن ۴": []
+    };
+
+    let currentTrick = [];
+    let leadSuit = "";
+
     function createDeck() {
 
       deck = [];
@@ -243,7 +297,8 @@
 
       for (let i = deck.length - 1; i > 0; i--) {
 
-        const j = Math.floor(Math.random() * (i + 1));
+        const j =
+          Math.floor(Math.random() * (i + 1));
 
         const temp = deck[i];
 
@@ -258,7 +313,9 @@
     function chooseHokm() {
 
       king =
-        players[Math.floor(Math.random() * players.length)];
+        players[
+          Math.floor(Math.random() * players.length)
+        ];
 
       document.getElementById("hokmInfo").textContent =
         "👑 حاکم شد: " + king;
@@ -266,15 +323,19 @@
       createDeck();
       shuffleDeck();
 
-      kingFirstFive = deck.slice(0, 5);
+      kingFirstFive =
+        deck.slice(0, 5);
 
       setTimeout(function() {
 
-        document.getElementById("startArea").style.display = "none";
+        document.getElementById("startArea")
+          .style.display = "none";
 
-        document.getElementById("gameArea").style.display = "block";
+        document.getElementById("gameArea")
+          .style.display = "block";
 
-        document.getElementById("kingName").textContent = king;
+        document.getElementById("kingName")
+          .textContent = king;
 
         showCards(
           kingFirstFive,
@@ -330,36 +391,23 @@
 
     function dealAllCards() {
 
-      /*
-        ۵ کارت اول قبلاً به حاکم داده شده.
-        این ۵ کارت را نگه می‌داریم.
-      */
+      hands = {
+        "شما": [],
+        "بازیکن ۲": [],
+        "بازیکن ۳": [],
+        "بازیکن ۴": []
+      };
 
-      let remainingDeck = deck.slice(5);
-
-      let hands = {};
-
-      for (let player of players) {
-        hands[player] = [];
-      }
-
-      /*
-        ۵ کارت اول حاکم
-      */
-
-      hands[king] = kingFirstFive.slice();
-
-      /*
-        ۸ کارت بعدی برای کامل شدن ۱۳ کارت حاکم
-      */
+      let remainingDeck =
+        deck.slice(5);
 
       hands[king] =
-        hands[king].concat(remainingDeck.slice(0, 8));
+        kingFirstFive.slice();
 
-      /*
-        ۳۹ کارت باقی‌مانده:
-        ۱۳ کارت برای هر یک از سه بازیکن دیگر
-      */
+      hands[king] =
+        hands[king].concat(
+          remainingDeck.slice(0, 8)
+        );
 
       let position = 8;
 
@@ -370,49 +418,156 @@
         }
 
         hands[player] =
-          remainingDeck.slice(position, position + 13);
+          remainingDeck.slice(
+            position,
+            position + 13
+          );
 
         position += 13;
 
       }
 
-      showAllHands(hands);
+      showMyHand();
 
     }
 
-    function showAllHands(hands) {
+    function showMyHand() {
 
-      const playersCards =
-        document.getElementById("playersCards");
+      const myHandArea =
+        document.getElementById("myHandArea");
 
-      playersCards.innerHTML =
-        "<h2>🃏 دست کامل بازیکنان</h2>";
+      const myHand =
+        document.getElementById("myHand");
 
-      for (let player of players) {
+      myHandArea.style.display = "block";
 
-        const playerBox =
+      myHand.innerHTML = "";
+
+      hands["شما"].forEach(
+        function(card, index) {
+
+          const cardElement =
+            document.createElement("div");
+
+          cardElement.className = "card";
+
+          if (
+            card.suit === "♥" ||
+            card.suit === "♦"
+          ) {
+
+            cardElement.classList.add("red");
+
+          }
+
+          cardElement.textContent =
+            card.rank + card.suit;
+
+          cardElement.onclick =
+            function() {
+              playMyCard(index);
+            };
+
+          myHand.appendChild(cardElement);
+
+        }
+      );
+
+      document.getElementById("info").textContent =
+        "🎴 نوبت شماست؛ یک کارت انتخاب کنید.";
+
+    }
+
+    function playMyCard(index) {
+
+      const card =
+        hands["شما"][index];
+
+      /*
+        اگر خال شروع مشخص شده باشد
+        و شما از آن خال داشته باشید،
+        باید همان خال را بازی کنید.
+      */
+
+      if (
+        leadSuit !== "" &&
+        hasSuit("شما", leadSuit) &&
+        card.suit !== leadSuit
+      ) {
+
+        document.getElementById("info").textContent =
+          "⚠️ باید از خال " +
+          leadSuit +
+          " بازی کنید.";
+
+        return;
+
+      }
+
+      if (currentTrick.length === 0) {
+
+        leadSuit = card.suit;
+
+      }
+
+      currentTrick.push({
+        player: "شما",
+        card: card
+      });
+
+      hands["شما"].splice(index, 1);
+
+      showCurrentTrick();
+
+      document.getElementById("info").textContent =
+        "کارت شما بازی شد: " +
+        card.rank +
+        card.suit;
+
+      showMyHand();
+
+    }
+
+    function hasSuit(player, suit) {
+
+      return hands[player].some(
+        function(card) {
+          return card.suit === suit;
+        }
+      );
+
+    }
+
+    function showCurrentTrick() {
+
+      const area =
+        document.getElementById("currentTrick");
+
+      area.innerHTML = "";
+
+      for (let play of currentTrick) {
+
+        const box =
           document.createElement("div");
 
-        playerBox.className = "playerBox";
+        box.className = "card";
 
-        const title =
-          document.createElement("h3");
+        if (
+          play.card.suit === "♥" ||
+          play.card.suit === "♦"
+        ) {
 
-        title.textContent =
-          player + " — " + hands[player].length + " کارت";
+          box.classList.add("red");
 
-        playerBox.appendChild(title);
+        }
 
-        const cards =
-          document.createElement("div");
+        box.textContent =
+          play.player +
+          " " +
+          play.card.rank +
+          play.card.suit;
 
-        cards.className = "cards";
-
-        showCards(hands[player], cards);
-
-        playerBox.appendChild(cards);
-
-        playersCards.appendChild(playerBox);
+        area.appendChild(box);
 
       }
 
