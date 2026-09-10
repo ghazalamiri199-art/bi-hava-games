@@ -334,42 +334,33 @@ function addTrickPoint(winner) {
   
 function chooseHokm() {
 
-  if (nextKing !== "") {
+  createDeck();
+  shuffleDeck();
 
-    king = nextKing;
-    nextKing = "";
+  let hokmKing = null;
 
-  } else {
+  while (!hokmKing) {
 
-    createDeck();
-    shuffleDeck();
+    for (let player of players) {
 
-    let hokmKing = null;
+      const card = deck.pop();
 
-    while (!hokmKing) {
+      document.getElementById("hokmInfo").textContent =
+        "🃏 کارت حاکم برای " + player + ": " +
+        card.rank + card.suit;
 
-      for (let player of players) {
+      if (card.rank === "A") {
 
-        const card = deck.pop();
-
-        document.getElementById("hokmInfo").textContent =
-          "🃏 کارت حاکم برای " + player + ": " +
-          card.rank + card.suit;
-
-        if (card.rank === "A") {
-
-          hokmKing = player;
-          break;
-
-        }
+        hokmKing = player;
+        break;
 
       }
 
     }
 
-    king = hokmKing;
-
   }
+
+  king = hokmKing;
 
   createDeck();
   shuffleDeck();
