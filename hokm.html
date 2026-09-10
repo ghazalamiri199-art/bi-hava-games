@@ -644,7 +644,9 @@ function playNextPlayer() {
     player: nextPlayer,
     card: randomCard
   });
-
+if (currentTrick.length === 1) {
+  leadSuit = randomCard.suit;
+    }
   showCurrentTrick();
 
   currentPlayer =
