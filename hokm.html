@@ -169,7 +169,15 @@
   overflow-x: auto;
   padding: 10px 5px 15px;
     }
+#myHand .card {
+  flex: 0 0 auto;
+  margin-left: -18px;
+}
 
+#myHand .card:first-child {
+  margin-left: 0;
+  }
+      
 #playedCards {
   margin-top: 0;
   min-height: 100px;
@@ -578,7 +586,7 @@ function showMyHand() {
 
   });
 
-  sortedHand.forEach(function(card) {
+  sortedHand.forEach(function(card, index) {
 
     const cardElement =
       document.createElement("div");
