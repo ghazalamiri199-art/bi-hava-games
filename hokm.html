@@ -839,7 +839,7 @@ function playNextPlayer() {
     hands[nextPlayer].indexOf(randomCard);
 
   hands[nextPlayer].splice(cardIndex, 1);
-
+showOpponentHands();
   currentTrick.push({
     player: nextPlayer,
     card: randomCard
