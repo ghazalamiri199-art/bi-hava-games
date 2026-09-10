@@ -378,16 +378,23 @@ function chooseHokm() {
 
   document.getElementById("kingName").textContent = king;
 
-    if (king === "شما") {
+  if (king === "شما") {
 
     showCards(
       kingFirstFive,
       document.getElementById("cards")
     );
 
-    }
+    document.getElementById("trumpArea").style.display = "block";
 
-  if (king !== "شما") {
+    document.getElementById("info").textContent =
+      "🎴 ۵ کارت شما؛ خال حکم را انتخاب کنید.";
+
+  } else {
+
+    document.getElementById("cards").innerHTML = "";
+
+    document.getElementById("trumpArea").style.display = "none";
 
     const botSuits = ["♠", "♥", "♦", "♣"];
 
