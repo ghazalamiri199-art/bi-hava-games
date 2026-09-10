@@ -529,7 +529,35 @@ function chooseHokm() {
       }
 
     }
+function showOpponentHands() {
 
+  const top = document.getElementById("handTop");
+  const left = document.getElementById("handLeft");
+  const right = document.getElementById("handRight");
+
+  top.innerHTML = "";
+  left.innerHTML = "";
+  right.innerHTML = "";
+
+  for (let i = 0; i < hands["بازیکن ۲"].length; i++) {
+    const card = document.createElement("div");
+    card.className = "backCard";
+    top.appendChild(card);
+  }
+
+  for (let i = 0; i < hands["بازیکن ۳"].length; i++) {
+    const card = document.createElement("div");
+    card.className = "backCard";
+    left.appendChild(card);
+  }
+
+  for (let i = 0; i < hands["بازیکن ۴"].length; i++) {
+    const card = document.createElement("div");
+    card.className = "backCard";
+    right.appendChild(card);
+  }
+
+    }
     function chooseTrump(selectedSuit) {
 
       trump = selectedSuit;
