@@ -175,7 +175,45 @@
 #myHand .card:first-child {
   margin-left: 0;
   }
-      
+ .opponentHand {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3;
+}
+
+.opponentHand .backCard {
+  width: 34px;
+  height: 50px;
+  background: #263238;
+  border: 2px solid #d4af37;
+  border-radius: 6px;
+  margin-left: -20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+}
+
+.opponentHand .backCard:first-child {
+  margin-left: 0;
+}
+
+.topHand {
+  top: 75px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.leftHand {
+  left: 55px;
+  top: 50%;
+  transform: translateY(-50%) rotate(90deg);
+}
+
+.rightHand {
+  right: 55px;
+  top: 50%;
+  transform: translateY(-50%) rotate(90deg);
+  }     
 #playedCards {
   margin-top: 0;
   min-height: 100px;
