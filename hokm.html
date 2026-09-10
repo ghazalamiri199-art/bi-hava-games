@@ -265,6 +265,7 @@
 
     let deck = [];
     let king = "";
+    let nextKing = "";
     let trump = "";
     let kingFirstFive = [];
 
@@ -331,42 +332,52 @@ function addTrickPoint(winner) {
     }
 
    function chooseHokm() {
+function chooseHokm() {
 
-  createDeck();
-  shuffleDeck();
+  if (nextKing !== "") {
 
-  let hokmKing = null;
+    king = nextKing;
+    nextKing = "";
 
-  while (!hokmKing) {
+  } else {
 
-    for (let player of players) {
+    createDeck();
+    shuffleDeck();
 
-      const card = deck.pop();
+    let hokmKing = null;
 
-      document.getElementById("hokmInfo").textContent =
-        "🃏 کارت حاکم برای " + player + ": " +
-        card.rank + card.suit;
+    while (!hokmKing) {
 
-      if (card.rank === "A") {
+      for (let player of players) {
 
-        hokmKing = player;
-        break;
+        const card = deck.pop();
+
+        document.getElementById("hokmInfo").textContent =
+          "🃏 کارت حاکم برای " + player + ": " +
+          card.rank + card.suit;
+
+        if (card.rank === "A") {
+
+          hokmKing = player;
+          break;
+
+        }
 
       }
 
     }
 
+    king = hokmKing;
+
   }
-
-  king = hokmKing;
-
-  document.getElementById("hokmInfo").textContent =
-    "👑 حاکم شد: " + king;
 
   createDeck();
   shuffleDeck();
 
   kingFirstFive = deck.slice(0, 5);
+
+  document.getElementById("hokmInfo").textContent =
+    "👑 حاکم شد: " + king;
 
   setTimeout(function() {
 
@@ -386,7 +397,7 @@ function addTrickPoint(winner) {
 
   }, 1200);
 
-    } 
+    }
 
     function showCards(cardList, area) {
 
@@ -432,7 +443,8 @@ function addTrickPoint(winner) {
     }
 
     function dealAllCards() {
-
+teamScore = 0;
+opponentScore = 0;
       hands = {
         "شما": [],
         "بازیکن ۲": [],
@@ -585,12 +597,7 @@ currentPlayer =
   ];
       showCurrentTrick();
 playNextPlayer();
-      document.getElementById("info").textContent =
-        "کارت شما بازی شد: " +
-        card.rank +
-        card.suit;
-
-      showMyHand();
+      
 
     }
 
@@ -640,11 +647,6 @@ playNextPlayer();
     }
 
 function playNextPlayer() {
-
-  if (currentTrick.length >= 4) {
-    return;
-  }
-
   const nextPlayer = currentPlayer;
 
   if (nextPlayer === "شما") {
@@ -715,6 +717,21 @@ if (currentTrick.length === 1) {
 
   const winner = findTrickWinner();
 
+  addTrickPoint(winner);
+  if (teamScore >= 7 || opponentScore >= 7) {
+
+  const winningTeam =
+    teamScore >= 7 ? "شما و یارت" : "حریف";
+if (teamScore >= 7) {
+  nextKing = "شما";
+} else {
+  nextKing = "بازیکن ۳";
+    }
+  document.getElementById("info").textContent =
+    "🏆 " + winningTeam + " برنده این دست شد!";
+
+  return;
+    }
   trickLeader = winner;
   currentPlayer = winner;
 
