@@ -170,15 +170,25 @@
     }
 #myHand .card {
   flex: 0 0 auto;
-  margin-left: -18px;
+  margin-left: -12px;
+  transition: transform 0.15s ease;
 }
+
+#myHand .card:hover {
+  transform: translateY(-10px);
+  z-index: 10;
+}
+
+#myHand .card:first-child {
+  margin-left: 0;
+    }
 
 #myHand .card:first-child {
   margin-left: 0;
   }
  .opponentHand {
   position: absolute;
-  display: flex;
+  display: none !important;
   justify-content: center;
   align-items: center;
   z-index: 3;
@@ -233,7 +243,20 @@
       font-size: 18px;
       font-weight: bold;
     }
-  </style>
+  #trumpDisplay {
+  display: inline-block;
+  margin: 8px auto;
+  padding: 6px 14px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 2px solid #d4af37;
+  border-radius: 15px;
+  font-size: 16px;
+  font-weight: bold;
+      }
+    #info {
+  display: none !important;
+      }
+  </style> 
 </head>
 
 <body>
@@ -264,12 +287,9 @@
       </div>
 
       <div id="gameArea">
-
-        <h2>👑 حاکم: <span id="kingName"></span></h2>
-
-        <p>۵ کارت اول حاکم:</p>
-
-        <div id="cards" class="cards"></div>
+<div id="gameStatus"></div>
+<div id="trumpDisplay">🃏 حکم: —</div>
+    <div id="cards" class="cards"></div>
 
         <div id="trumpArea">
 
@@ -561,9 +581,9 @@ function showOpponentHands() {
 
     }
     function chooseTrump(selectedSuit) {
-
       trump = selectedSuit;
-
+document.getElementById("trumpDisplay").textContent =
+  "🃏 حکم: " + trump;
       document.getElementById("info").textContent =
   "👑 حاکم: " + king + " | 🃏 حکم: " + trump;
 
@@ -615,6 +635,8 @@ opponentScore = 0;
 
       trickLeader = king;
 currentPlayer = king;
+document.getElementById("gameStatus").textContent =
+  "👑 حاکم: " + king;      
 showOpponentHands();
 if (king === "شما") {
   showMyHand();
@@ -688,14 +710,11 @@ function showMyHand() {
 
   if (currentPlayer === "شما") {
 
-    document.getElementById("info").textContent =
-      "🎴 نوبت شماست؛ یک کارت انتخاب کنید.";
+    document.getElementById("info").textContent = "";
 
   } else {
 
-    document.getElementById("info").textContent =
-      "🎴 نوبت " + currentPlayer + " است.";
-
+    document.getElementById("info").textContent = "";
   }
 
     }
