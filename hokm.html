@@ -483,60 +483,78 @@ opponentScore = 0;
       showMyHand();
 
     }
+function showMyHand() {
 
-    function showMyHand() {
+  const myHandArea =
+    document.getElementById("myHandArea");
 
-      const myHandArea =
-        document.getElementById("myHandArea");
+  const myHand =
+    document.getElementById("myHand");
 
-      const myHand =
-        document.getElementById("myHand");
+  myHandArea.style.display = "block";
 
-      myHandArea.style.display = "block";
+  myHand.innerHTML = "";
 
-      myHand.innerHTML = "";
+  const sortedHand = [...hands["شما"]].sort(function(a, b) {
 
-      hands["شما"].forEach(
-        function(card, index) {
+    const suitOrder = {
+      "♠": 0,
+      "♥": 1,
+      "♦": 2,
+      "♣": 3
+    };
 
-          const cardElement =
-            document.createElement("div");
+    if (suitOrder[a.suit] !== suitOrder[b.suit]) {
+      return suitOrder[a.suit] - suitOrder[b.suit];
+    }
 
-          cardElement.className = "card";
+    return ranks.indexOf(a.rank) - ranks.indexOf(b.rank);
 
-          if (
-            card.suit === "♥" ||
-            card.suit === "♦"
-          ) {
+  });
 
-            cardElement.classList.add("red");
+  sortedHand.forEach(function(card) {
 
-          }
+    const cardElement =
+      document.createElement("div");
 
-          cardElement.textContent =
-            card.rank + card.suit;
+    cardElement.className = "card";
 
-          cardElement.onclick =
-            function() {
-              playMyCard(index);
-            };
+    if (
+      card.suit === "♥" ||
+      card.suit === "♦"
+    ) {
 
-          myHand.appendChild(cardElement);
+      cardElement.classList.add("red");
 
-        }
-      );
+    }
+
+    cardElement.textContent =
+      card.rank + card.suit;
+
+    cardElement.onclick = function() {
+
+      const realIndex =
+        hands["شما"].indexOf(card);
+
+      playMyCard(realIndex);
+
+    };
+
+    myHand.appendChild(cardElement);
+
+  });
 
   if (currentPlayer === "شما") {
 
-  document.getElementById("info").textContent =
-    "🎴 نوبت شماست؛ یک کارت انتخاب کنید.";
+    document.getElementById("info").textContent =
+      "🎴 نوبت شماست؛ یک کارت انتخاب کنید.";
 
-} else {
+  } else {
 
-  document.getElementById("info").textContent =
-    "🎴 نوبت " + currentPlayer + " است.";
+    document.getElementById("info").textContent =
+      "🎴 نوبت " + currentPlayer + " است.";
 
-    }
+  }
 
     }
 
