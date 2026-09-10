@@ -372,21 +372,29 @@ function chooseHokm() {
 
   setTimeout(function() {
 
-    document.getElementById("startArea")
-      .style.display = "none";
+  document.getElementById("startArea").style.display = "none";
 
-    document.getElementById("gameArea")
-      .style.display = "block";
+  document.getElementById("gameArea").style.display = "block";
 
-    document.getElementById("kingName")
-      .textContent = king;
+  document.getElementById("kingName").textContent = king;
 
-    showCards(
-      kingFirstFive,
-      document.getElementById("cards")
-    );
+  showCards(
+    kingFirstFive,
+    document.getElementById("cards")
+  );
 
-  }, 1200);
+  if (king !== "شما") {
+
+    const botSuits = ["♠", "♥", "♦", "♣"];
+
+    const botTrump =
+      botSuits[Math.floor(Math.random() * botSuits.length)];
+
+    chooseTrump(botTrump);
+
+  }
+
+}, 1200);
 
     }
 
