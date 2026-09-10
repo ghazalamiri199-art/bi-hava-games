@@ -599,15 +599,16 @@ playNextPlayer();
     }
   function playNextPlayer() {
 
+function playNextPlayer() {
+
   if (currentTrick.length >= 4) {
     return;
   }
 
-const nextPlayer =
-  currentPlayer;
-    
+  const nextPlayer = currentPlayer;
 
   if (nextPlayer === "شما") {
+    showMyHand();
     return;
   }
 
@@ -626,69 +627,82 @@ const nextPlayer =
 
     });
 
+  if (validCards.length === 0) {
+    return;
+  }
+
   const randomCard =
     validCards[
       Math.floor(Math.random() * validCards.length)
     ];
 
   const cardIndex =
-  hands[nextPlayer].indexOf(randomCard);
+    hands[nextPlayer].indexOf(randomCard);
 
-hands[nextPlayer].splice(cardIndex, 1);
+  hands[nextPlayer].splice(cardIndex, 1);
 
-currentTrick.push({
-  player: nextPlayer,
-  card: randomCard
-});
-
-currentPlayer =
-  players[
-    (players.indexOf(currentPlayer) + 1)
-    % players.length
-  ];
+  currentTrick.push({
+    player: nextPlayer,
+    card: randomCard
+  });
 
   showCurrentTrick();
 
+  currentPlayer =
+    players[
+      (players.indexOf(nextPlayer) + 1)
+      % players.length
+    ];
+
   if (currentTrick.length < 4) {
 
-    setTimeout(function() {
-      playNextPlayer();
-    }, 700);
+    if (currentPlayer === "شما") {
 
-  } else {
+      showMyHand();
 
-    const winner = findTrickWinner();
-trickLeader = winner;
-    currentPlayer = winner;
-document.getElementById("info").textContent =
-  "🏆 برنده این دور: " + winner;
+    } else {
 
-    setTimeout(function() {
-
-      currentTrick = [];
-leadSuit = "";
-
-showCurrentTrick();
-
-if (trickLeader === "شما") {
-
-  showMyHand();
-
-} else {
-
-  document.getElementById("info").textContent =
-    "🎴 نوبت " + trickLeader + " است.";
-
-  playNextPlayer();
+      setTimeout(function() {
+        playNextPlayer();
+      }, 700);
 
     }
-    }, 1500);
 
+    return;
   }
-}
 
-function findTrickWinner() {
+  const winner = findTrickWinner();
 
+  trickLeader = winner;
+  currentPlayer = winner;
+
+  document.getElementById("info").textContent =
+    "🏆 برنده این دور: " + winner;
+
+  setTimeout(function() {
+
+    currentTrick = [];
+    leadSuit = "";
+
+    showCurrentTrick();
+
+    if (trickLeader === "شما") {
+
+      showMyHand();
+
+    } else {
+
+      document.getElementById("info").textContent =
+        "🎴 نوبت " + trickLeader + " است.";
+
+      playNextPlayer();
+
+    }
+
+  }, 1500);
+
+    }
+    function findTrickWinner() {
   const lead = currentTrick[0].card.suit;
 
   let winner = currentTrick[0];
