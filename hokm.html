@@ -378,10 +378,14 @@ function chooseHokm() {
 
   document.getElementById("kingName").textContent = king;
 
-  showCards(
-    kingFirstFive,
-    document.getElementById("cards")
-  );
+    if (king === "شما") {
+
+    showCards(
+      kingFirstFive,
+      document.getElementById("cards")
+    );
+
+    }
 
   if (king !== "شما") {
 
