@@ -392,18 +392,48 @@ function chooseHokm() {
 
   } else {
 
+       const suitScores = {
+      "♠": 0,
+      "♥": 0,
+      "♦": 0,
+      "♣": 0
+    };
+
+    for (let card of kingFirstFive) {
+
+      let value = ranks.indexOf(card.rank);
+
+      if (value < 0) {
+        value = 12;
+      }
+
+      suitScores[card.suit] += (13 - value);
+
+    }
+
+    const maxScore =
+      Math.max(
+        suitScores["♠"],
+        suitScores["♥"],
+        suitScores["♦"],
+        suitScores["♣"]
+      );
+
+    const bestSuits =
+      Object.keys(suitScores).filter(function(suit) {
+        return suitScores[suit] === maxScore;
+      });
+
+    const botTrump =
+      bestSuits[
+        Math.floor(Math.random() * bestSuits.length)
+      ];
+
     document.getElementById("cards").innerHTML = "";
 
     document.getElementById("trumpArea").style.display = "none";
 
-    const botSuits = ["♠", "♥", "♦", "♣"];
-
-    const botTrump =
-      botSuits[Math.floor(Math.random() * botSuits.length)];
-
-    chooseTrump(botTrump);
-
-  }
+    chooseTrump(botTrump); 
 
 }, 1200);
 
