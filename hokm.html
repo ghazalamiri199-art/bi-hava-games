@@ -510,20 +510,24 @@ if (currentPlayer !== "شما") {
         باید همان خال را بازی کنید.
       */
 
-      if (
-        leadSuit !== "" &&
-        hasSuit("شما", leadSuit) &&
-        card.suit !== leadSuit
-      ) {
+      if (currentTrick.length > 0) {
 
-        document.getElementById("info").textContent =
-          "⚠️ باید از خال " +
-          leadSuit +
-          " بازی کنید.";
+  const actualLeadSuit =
+    currentTrick[0].card.suit;
 
-        return;
+  if (
+    hasSuit("شما", actualLeadSuit) &&
+    card.suit !== actualLeadSuit
+  ) {
 
-      }
+    document.getElementById("info").textContent =
+      "⚠️ باید از خال " +
+      actualLeadSuit +
+      " بازی کنید.";
+
+    return;
+  }
+    }
 
       if (currentTrick.length === 0) {
 
