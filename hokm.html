@@ -279,6 +279,21 @@
     let leadSuit = "";
 let trickLeader = "شما";
     let currentPlayer = "شما";
+    let teamScore = 0;
+let opponentScore = 0;
+
+function addTrickPoint(winner) {
+
+  if (winner === "شما" || winner === "بازیکن ۲") {
+    teamScore++;
+  } else {
+    opponentScore++;
+  }
+
+  document.getElementById("info").textContent =
+    "🏆 شما و یارت: " + teamScore +
+    " | حریف: " + opponentScore;
+    }
     function createDeck() {
 
       deck = [];
@@ -315,41 +330,63 @@ let trickLeader = "شما";
 
     }
 
-    function chooseHokm() {
+   function chooseHokm() {
 
-      king =
-        players[
-          Math.floor(Math.random() * players.length)
-        ];
+  createDeck();
+  shuffleDeck();
+
+  let hokmKing = null;
+
+  while (!hokmKing) {
+
+    for (let player of players) {
+
+      const card = deck.pop();
 
       document.getElementById("hokmInfo").textContent =
-        "👑 حاکم شد: " + king;
+        "🃏 کارت حاکم برای " + player + ": " +
+        card.rank + card.suit;
 
-      createDeck();
-      shuffleDeck();
+      if (card.rank === "A") {
 
-      kingFirstFive =
-        deck.slice(0, 5);
+        hokmKing = player;
+        break;
 
-      setTimeout(function() {
-
-        document.getElementById("startArea")
-          .style.display = "none";
-
-        document.getElementById("gameArea")
-          .style.display = "block";
-
-        document.getElementById("kingName")
-          .textContent = king;
-
-        showCards(
-          kingFirstFive,
-          document.getElementById("cards")
-        );
-
-      }, 800);
+      }
 
     }
+
+  }
+
+  king = hokmKing;
+
+  document.getElementById("hokmInfo").textContent =
+    "👑 حاکم شد: " + king;
+
+  createDeck();
+  shuffleDeck();
+
+  kingFirstFive = deck.slice(0, 5);
+
+  setTimeout(function() {
+
+    document.getElementById("startArea")
+      .style.display = "none";
+
+    document.getElementById("gameArea")
+      .style.display = "block";
+
+    document.getElementById("kingName")
+      .textContent = king;
+
+    showCards(
+      kingFirstFive,
+      document.getElementById("cards")
+    );
+
+  }, 1200);
+
+    } 
 
     function showCards(cardList, area) {
 
