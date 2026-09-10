@@ -523,7 +523,16 @@ opponentScore = 0;
 
       }
 
-      showMyHand();
+      trickLeader = king;
+currentPlayer = king;
+
+if (king === "شما") {
+  showMyHand();
+} else {
+  document.getElementById("info").textContent =
+    "🎴 نوبت " + king + " است.";
+  playNextPlayer();
+    }
 
     }
 function showMyHand() {
