@@ -155,15 +155,19 @@
     #myHand {
       margin-top: 15px;
     }
+
 #playedCards {
-  position: absolute;
-  top: 0;
+  margin-top: 0;
+  min-height: 100px;
+}
+
+#currentTrick {
+  position: fixed;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 220px;
-  min-height: 100px;
-    }
-
+  z-index: 10;
+  }
     .message {
       margin: 15px 0;
       font-size: 18px;
