@@ -3,993 +3,253 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>بازی حکم</title>
+
+  <title>حکم | Bi Hava Games</title>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
   <style>
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      margin: 0;
       min-height: 100vh;
-      background: #126b45;
+      font-family: Tahoma, Arial, sans-serif;
+      background:
+        radial-gradient(circle at top, #263b32 0%, #10231c 45%, #08130f 100%);
       color: white;
-      font-family: Arial, Tahoma, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 430px;
       text-align: center;
     }
 
-    h1 {
-      margin: 20px 0;
-    }
-
-
-.table {
-  width: 94%;
-  max-width: 520px;
-  height: 650px;
-  margin: 15px auto;
-  position: relative;
-  background: #08733f;
-  border: 6px solid #d4af37;
-  border-radius: 35px;
-  padding: 10px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.5);
-    }
-
-.player {
-  position: absolute;
-  padding: 6px 12px;
-  background: rgba(0, 0, 0, 0.55);
-  border: 2px solid #d4af37;
-  border-radius: 18px;
-  font-weight: bold;
-  font-size: 14px;
-  z-index: 5;
-  white-space: nowrap;
-}
     .top {
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.bottom {
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.left {
-  left: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.right {
-  right: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-    .center {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 90%;
-      max-height: 600px;
-      overflow-y: auto;
+      margin-bottom: 35px;
     }
 
-    .cards {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 8px;
-      margin-top: 15px;
-    }
-.card {
-  width: 52px;
-  height: 76px;
-  background: white;
-  color: black;
-  border: 2px solid #222;
-  border-radius: 9px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 21px;
-  font-weight: bold;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.45);
-  cursor: pointer;
-  user-select: none;
-  transition: transform 0.15s ease;
-  }
-
-    .card:hover {
-      transform: translateY(-5px);
+    .crown {
+      font-size: 48px;
+      margin-bottom: 10px;
     }
 
-    .red {
-      color: #d11;
-    }
-
-    .disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-    }
-
-    button {
-      margin: 8px;
-      padding: 12px 18px;
-      border: none;
-      border-radius: 10px;
-      font-size: 17px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .suit-button {
+    h1 {
       font-size: 30px;
-      min-width: 65px;
+      margin-bottom: 10px;
     }
 
-    .red-button {
-      color: #d11;
+    .subtitle {
+      color: #c8d4cf;
+      font-size: 15px;
+      line-height: 1.8;
     }
 
-    #gameArea {
-      display: none;
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
 
-    .playerBox {
-      margin: 15px 0;
-      padding: 12px;
-      background: rgba(0,0,0,0.2);
-      border-radius: 12px;
+    .game-option {
+      width: 100%;
+      border: none;
+      border-radius: 20px;
+      padding: 19px 18px;
+      background: rgba(255,255,255,0.09);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: white;
+      display: flex;
+      align-items: center;
+      text-align: right;
+      cursor: pointer;
+      transition: 0.2s;
     }
 
-    .playerBox h3 {
-      margin: 5px;
+    .game-option:active {
+      transform: scale(0.97);
+      background: rgba(255,255,255,0.16);
     }
 
-    #myHandArea {
-      margin-top: 25px;
+    .icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(255,255,255,0.12);
+      font-size: 27px;
+      margin-left: 15px;
+      flex-shrink: 0;
     }
 
-#myHand { margin-top: 25px; display: flex; justify-content: center; align-items: flex-end; flex-wrap: nowrap; direction: ltr; overflow-x: auto; overflow-y: visible; padding: 35px 10px 25px; height: 150px; } #myHand .card { flex: 0 0 auto; margin-left: -14px; transform-origin: bottom center; transition: transform 0.2s ease; } #myHand .card:nth-child(1) { transform: rotate(-15deg) translateY(12px); } #myHand .card:nth-child(2) { transform: rotate(-12deg) translateY(7px); } #myHand .card:nth-child(3) { transform: rotate(-9deg) translateY(3px); } #myHand .card:nth-child(4) { transform: rotate(-6deg); } #myHand .card:nth-child(5) { transform: rotate(-3deg); } #myHand .card:nth-child(6) { transform: rotate(0deg); } #myHand .card:nth-child(7) { transform: rotate(3deg); } #myHand .card:nth-child(8) { transform: rotate(6deg); } #myHand .card:nth-child(9) { transform: rotate(9deg); } #myHand .card:nth-child(10) { transform: rotate(12deg) translateY(7px); } #myHand .card:nth-child(11) { transform: rotate(15deg) translateY(12px); } #myHand .card:hover { transform: translateY(-18px) scale(1.08) !important; z-index: 20; } #myHand .card:first-child { margin-left: 0; } 
-
-#myHand .card:hover {
-  transform: translateY(-10px);
-  z-index: 10;
-}
-
-#myHand .card:first-child {
-  margin-left: 0;
+    .text {
+      flex: 1;
     }
 
-#myHand .card:first-child {
-  margin-left: 0;
-  }
- .opponentHand {
-  position: absolute;
-  display: none !important;
-  justify-content: center;
-  align-items: center;
-  z-index: 3;
-}
-
-.opponentHand .backCard {
-  width: 34px;
-  height: 50px;
-  background: #263238;
-  border: 2px solid #d4af37;
-  border-radius: 6px;
-  margin-left: -20px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-}
-
-.opponentHand .backCard:first-child {
-  margin-left: 0;
-}
-
-.topHand {
-  top: 75px;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.leftHand {
-  left: 35px;
-  top: 50%;
-  transform: translateY(-50%);
-  flex-direction: column;
-}
-.rightHand {
-  right: 35px;
-  top: 50%;
-  transform: translateY(-50%);
-  flex-direction: column;
-    }
-#playedCards {
-  margin-top: 0;
-  min-height: 100px;
-}
-
-#currentTrick {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 10;
-  }
-    .message {
-      margin: 15px 0;
+    .title {
+      display: block;
       font-size: 18px;
       font-weight: bold;
+      margin-bottom: 6px;
     }
-  #trumpDisplay {
-  display: inline-block;
-  margin: 8px auto;
-  padding: 6px 14px;
-  background: rgba(0, 0, 0, 0.55);
-  border: 2px solid #d4af37;
-  border-radius: 15px;
-  font-size: 16px;
-  font-weight: bold;
-      }
-    #info {
-  display: none !important;
-      }
-.avatar {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: #eee;
-  border: 2px solid #d4af37;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  margin: 0 auto 3px;
-  }
-   .kingBadge {
-  display: none;
-  font-size: 22px;
-  text-align: center;
-  margin-bottom: 2px;
-    } 
-  </style> 
-  
+
+    .description {
+      display: block;
+      color: #b9c8c1;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .arrow {
+      font-size: 22px;
+      color: #9db0a7;
+      margin-right: 8px;
+    }
+
+    .back {
+      margin-top: 25px;
+      background: transparent;
+      border: none;
+      color: #b8c7c0;
+      font-size: 14px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+
+    .back:active {
+      opacity: 0.6;
+    }
+  </style>
 </head>
 
 <body>
 
-  <h1>🃏 بازی حکم</h1>
+  <div class="page">
 
-  <div class="table">
-<div class="player top" data-player="بازیکن ۲"> <div class="kingBadge">👑</div> <div class="avatar">👤</div> <span>بازیکن ۲</span> </div> <div class="player left" data-player="بازیکن ۳"> <div class="kingBadge">👑</div> <div class="avatar">👤</div> <span>بازیکن ۳</span> </div> <div class="player right" data-player="بازیکن ۴"> <div class="kingBadge">👑</div> <div class="avatar">👤</div> <span>بازیکن ۴</span> </div> <div class="player bottom" data-player="شما"> <div class="kingBadge">👑</div> <div class="avatar">👤</div> <span>شما</span> </div> <div id="handTop" class="opponentHand topHand"></div> <div id="handLeft" class="opponentHand leftHand"></div> <div id="handRight" class="opponentHand rightHand"></div> 
+    <div class="top">
+      <div class="crown">👑</div>
 
-<div id="handTop" class="opponentHand topHand"></div>
-<div id="handLeft" class="opponentHand leftHand"></div>
-<div id="handRight" class="opponentHand rightHand"></div>
-    <div class="center">
+      <h1>بازی حکم</h1>
 
-      <div id="startArea">
+      <p class="subtitle">
+        نوع بازی خودت رو انتخاب کن
+      </p>
+    </div>
 
-        <h2>👑 تعیین حاکم</h2>
 
-        <p>برای شروع بازی، حاکم را مشخص کنید.</p>
+    <div class="options">
 
-        <button onclick="chooseHokm()">تعیین حاکم</button>
+      <!-- بازی تک نفره -->
+      <button class="game-option" onclick="singlePlayer()">
 
-        <div id="hokmInfo"></div>
+        <div class="icon">🤖</div>
 
-      </div>
-
-      <div id="gameArea">
-<div id="gameStatus"></div>
-<div id="trumpDisplay">🃏 حکم: —</div>
-    <div id="cards" class="cards"></div>
-
-        <div id="trumpArea">
-
-          <h3>خال حکم را انتخاب کنید:</h3>
-
-          <button class="suit-button" onclick="chooseTrump('♠')">♠</button>
-
-          <button class="suit-button red-button" onclick="chooseTrump('♥')">♥</button>
-
-          <button class="suit-button red-button" onclick="chooseTrump('♦')">♦</button>
-
-          <button class="suit-button" onclick="chooseTrump('♣')">♣</button>
-
+        <div class="text">
+          <span class="title">بازی تک نفره با ربات‌ها</span>
+          <span class="description">
+            بازی حکم با سه بازیکن ربات
+          </span>
         </div>
 
-        <div id="info" class="message">
-          منتظر انتخاب حکم...
+        <div class="arrow">‹</div>
+
+      </button>
+
+
+      <!-- بازی عمومی -->
+      <button class="game-option" onclick="publicGame()">
+
+        <div class="icon">🌐</div>
+
+        <div class="text">
+          <span class="title">بازی عمومی</span>
+          <span class="description">
+            وارد یک میز عمومی شو و با بازیکنان دیگر بازی کن
+          </span>
         </div>
 
-        <div id="myHandArea" style="display:none;">
+        <div class="arrow">‹</div>
 
-          <h2>🎴 دست شما</h2>
+      </button>
 
-          <div id="myHand" class="cards"></div>
 
+      <!-- بازی با دوستان -->
+      <button class="game-option" onclick="friendsGame()">
+
+        <div class="icon">👥</div>
+
+        <div class="text">
+          <span class="title">بازی با دوستان</span>
+          <span class="description">
+            دوستانت را دعوت کن و یک میز خصوصی بساز
+          </span>
         </div>
 
+        <div class="arrow">‹</div>
 
-          <div id="currentTrick" class="cards"></div>
-
-        </div>
-
-      </div>
+      </button>
 
     </div>
 
+
+    <button class="back" onclick="goBack()">
+      ← بازگشت
+    </button>
+
   </div>
+
 
   <script>
 
-    const suits = ["♠", "♥", "♦", "♣"];
+    // اتصال به تلگرام
+    const tg = window.Telegram?.WebApp;
 
-    const ranks = [
-      "A", "K", "Q", "J", "10",
-      "9", "8", "7", "6", "5",
-      "4", "3", "2"
-    ];
-
-    const players = [
-      "شما",
-      "بازیکن ۲",
-      "بازیکن ۳",
-      "بازیکن ۴"
-    ];
-
-    let deck = [];
-    let king = "";
-    let nextKing = "";
-    let trump = "";
-    let kingFirstFive = [];
-
-    let hands = {
-      "شما": [],
-      "بازیکن ۲": [],
-      "بازیکن ۳": [],
-      "بازیکن ۴": []
-    };
-
-    let currentTrick = [];
-    let leadSuit = "";
-let trickLeader = "شما";
-    let currentPlayer = "شما";
-    let teamScore = 0;
-let opponentScore = 0;
-
-function addTrickPoint(winner) {
-
-  if (winner === "شما" || winner === "بازیکن ۲") {
-    teamScore++;
-  } else {
-    opponentScore++;
-  }
-
-  document.getElementById("info").textContent =
-    "🏆 شما و یارت: " + teamScore +
-    " | حریف: " + opponentScore;
+    if (tg) {
+      tg.ready();
+      tg.expand();
     }
-    function createDeck() {
 
-      deck = [];
 
-      for (let suit of suits) {
+    // بازی تک نفره
+    function singlePlayer() {
+      alert("بازی تک نفره با ربات‌ها");
+    }
 
-        for (let rank of ranks) {
 
-          deck.push({
-            suit: suit,
-            rank: rank
-          });
+    // بازی عمومی
+    function publicGame() {
+      alert("بازی عمومی");
+    }
 
-        }
 
+    // بازی با دوستان
+    function friendsGame() {
+      alert("بازی با دوستان");
+    }
+
+
+    // برگشت به صفحه اصلی
+    function goBack() {
+
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = "index.html";
       }
 
     }
 
-    function shuffleDeck() {
-
-      for (let i = deck.length - 1; i > 0; i--) {
-
-        const j =
-          Math.floor(Math.random() * (i + 1));
-
-        const temp = deck[i];
-
-        deck[i] = deck[j];
-
-        deck[j] = temp;
-
-      }
-
-    }
-
-  
-function chooseHokm() {
-
-  createDeck();
-  shuffleDeck();
-
-  let hokmKing = null;
-
-  while (!hokmKing) {
-
-    for (let player of players) {
-
-      const card = deck.pop();
-
-      document.getElementById("hokmInfo").textContent =
-        "🃏 کارت حاکم برای " + player + ": " +
-        card.rank + card.suit;
-
-      if (card.rank === "A") {
-
-        hokmKing = player;
-        break;
-
-      }
-
-    }
-
-  }
-
-  king = hokmKing;
-
-  createDeck();
-  shuffleDeck();
-
-  kingFirstFive = deck.slice(0, 5);
-
-  document.getElementById("hokmInfo").textContent =
-    "👑 حاکم شد: " + king;
-
-  setTimeout(function() {
-
-  document.getElementById("startArea").style.display = "none";
-
-  document.getElementById("gameArea").style.display = "block";
-
-  document.getElementById("kingName").textContent = king;
-
-  if (king === "شما") {
-
-    showCards(
-      kingFirstFive,
-      document.getElementById("cards")
-    );
-
-    document.getElementById("trumpArea").style.display = "block";
-
-    document.getElementById("info").textContent =
-      "🎴 ۵ کارت شما؛ خال حکم را انتخاب کنید.";
-
-  } else {
-
-       const suitScores = {
-      "♠": 0,
-      "♥": 0,
-      "♦": 0,
-      "♣": 0
-    };
-
-    for (let card of kingFirstFive) {
-
-      let value = ranks.indexOf(card.rank);
-
-      if (value < 0) {
-        value = 12;
-      }
-
-      suitScores[card.suit] += (13 - value);
-
-    }
-
-    const maxScore =
-      Math.max(
-        suitScores["♠"],
-        suitScores["♥"],
-        suitScores["♦"],
-        suitScores["♣"]
-      );
-
-    const bestSuits =
-      Object.keys(suitScores).filter(function(suit) {
-        return suitScores[suit] === maxScore;
-      });
-
-    const botTrump =
-      bestSuits[
-        Math.floor(Math.random() * bestSuits.length)
-      ];
-
-    document.getElementById("cards").innerHTML = "";
-
-    document.getElementById("trumpArea").style.display = "none";
-
-        chooseTrump(botTrump); 
-
-  }
-
-}, 1200);
-
-    } 
-
-    function showCards(cardList, area) {
-
-      area.innerHTML = "";
-
-      for (let card of cardList) {
-
-        const cardElement =
-          document.createElement("div");
-
-        cardElement.className = "card";
-
-        if (
-          card.suit === "♥" ||
-          card.suit === "♦"
-        ) {
-
-          cardElement.classList.add("red");
-
-        }
-
-        cardElement.textContent =
-          card.rank + card.suit;
-
-        area.appendChild(cardElement);
-
-      }
-
-    }
-function showOpponentHands() {
-
-  const top = document.getElementById("handTop");
-  const left = document.getElementById("handLeft");
-  const right = document.getElementById("handRight");
-
-  top.innerHTML = "";
-  left.innerHTML = "";
-  right.innerHTML = "";
-
-  for (let i = 0; i < hands["بازیکن ۲"].length; i++) {
-    const card = document.createElement("div");
-    card.className = "backCard";
-    top.appendChild(card);
-  }
-
-  for (let i = 0; i < hands["بازیکن ۳"].length; i++) {
-    const card = document.createElement("div");
-    card.className = "backCard";
-    left.appendChild(card);
-  }
-
-  for (let i = 0; i < hands["بازیکن ۴"].length; i++) {
-    const card = document.createElement("div");
-    card.className = "backCard";
-    right.appendChild(card);
-  }
-
-    }
-    function chooseTrump(selectedSuit) {
-      trump = selectedSuit;
-document.getElementById("trumpDisplay").textContent =
-  "🃏 حکم: " + trump;
-      document.getElementById("info").textContent =
-  "👑 حاکم: " + king + " | 🃏 حکم: " + trump;
-
-      document.getElementById("trumpArea").innerHTML =
-        "<h3>حکم بازی: " + trump + "</h3>";
-
-      dealAllCards();
-
-    }
-
-    function dealAllCards() {
-teamScore = 0;
-opponentScore = 0;
-      hands = {
-        "شما": [],
-        "بازیکن ۲": [],
-        "بازیکن ۳": [],
-        "بازیکن ۴": []
-      };
-
-      let remainingDeck =
-        deck.slice(5);
-
-      hands[king] =
-        kingFirstFive.slice();
-
-      hands[king] =
-        hands[king].concat(
-          remainingDeck.slice(0, 8)
-        );
-
-      let position = 8;
-
-      for (let player of players) {
-
-        if (player === king) {
-          continue;
-        }
-
-        hands[player] =
-          remainingDeck.slice(
-            position,
-            position + 13
-          );
-
-        position += 13;
-
-      }
-
-      trickLeader = king;
-currentPlayer = king;
-document.getElementById("gameStatus").textContent =
-  "👑 حاکم: " + king;      
-showOpponentHands();
-if (king === "شما") {
-  showMyHand();
-} else {
-  document.getElementById("info").textContent =
-    "🎴 نوبت " + king + " است.";
-  playNextPlayer();
-    }
-
-    }
-function showMyHand() {
-
-  const myHandArea =
-    document.getElementById("myHandArea");
-
-  const myHand =
-    document.getElementById("myHand");
-
-  myHandArea.style.display = "block";
-
-  myHand.innerHTML = "";
-
-  const sortedHand = [...hands["شما"]].sort(function(a, b) {
-
-    const suitOrder = {
-      "♠": 0,
-      "♥": 1,
-      "♦": 2,
-      "♣": 3
-    };
-
-    if (suitOrder[a.suit] !== suitOrder[b.suit]) {
-      return suitOrder[a.suit] - suitOrder[b.suit];
-    }
-
-    return ranks.indexOf(a.rank) - ranks.indexOf(b.rank);
-
-  });
-
-  sortedHand.forEach(function(card, index) {
-
-    const cardElement =
-      document.createElement("div");
-
-    cardElement.className = "card";
-
-    if (
-      card.suit === "♥" ||
-      card.suit === "♦"
-    ) {
-
-      cardElement.classList.add("red");
-
-    }
-
-    cardElement.textContent =
-      card.rank + card.suit;
-
-    cardElement.onclick = function() {
-
-      const realIndex =
-        hands["شما"].indexOf(card);
-
-      playMyCard(realIndex);
-
-    };
-
-    myHand.appendChild(cardElement);
-
-  });
-
-  if (currentPlayer === "شما") {
-
-    document.getElementById("info").textContent = "";
-
-  } else {
-
-    document.getElementById("info").textContent = "";
-  }
-
-    }
-
-    function playMyCard(index) {
-if (currentPlayer !== "شما") {
-
-  document.getElementById("info").textContent =
-    "⏳ الان نوبت " + currentPlayer + " است.";
-
-  return;
-
-    }
-      const card =
-        hands["شما"][index];
-
-      /*
-        اگر خال شروع مشخص شده باشد
-        و شما از آن خال داشته باشید،
-        باید همان خال را بازی کنید.
-      */
-
-      if (currentTrick.length > 0) {
-
-  const actualLeadSuit =
-    currentTrick[0].card.suit;
-
-  if (
-    hasSuit("شما", actualLeadSuit) &&
-    card.suit !== actualLeadSuit
-  ) {
-
-    document.getElementById("info").textContent =
-      "⚠️ باید از خال " +
-      actualLeadSuit +
-      " بازی کنید.";
-
-    return;
-  }
-    }
-
-      if (currentTrick.length === 0) {
-
-        leadSuit = card.suit;
-
-      }
-
-      currentTrick.push({
-        player: "شما",
-        card: card
-      });
-
-      hands["شما"].splice(index, 1);
-currentPlayer =
-  players[
-    (players.indexOf(currentPlayer) + 1)
-    % players.length
-  ];
-      showCurrentTrick();
-playNextPlayer();
-      
-
-    }
-
-    function hasSuit(player, suit) {
-
-      return hands[player].some(
-        function(card) {
-          return card.suit === suit;
-        }
-      );
-
-    }
-
-    function showCurrentTrick() {
-
-      const area =
-        document.getElementById("currentTrick");
-
-      area.innerHTML = "";
-
-      for (let play of currentTrick) {
-
-        const box =
-          document.createElement("div");
-
-        box.className = "card";
-
-        if (
-          play.card.suit === "♥" ||
-          play.card.suit === "♦"
-        ) {
-
-          box.classList.add("red");
-
-        }
-
-        box.textContent =
-          play.player +
-          " " +
-          play.card.rank +
-          play.card.suit;
-
-        area.appendChild(box);
-
-      }
-
-    }
-
-function playNextPlayer() {
-  const nextPlayer = currentPlayer;
-
-  if (nextPlayer === "شما") {
-    showMyHand();
-    return;
-  }
-
-  const validCards =
-    hands[nextPlayer].filter(function(card) {
-
-      if (leadSuit === "") {
-        return true;
-      }
-
-      if (hasSuit(nextPlayer, leadSuit)) {
-        return card.suit === leadSuit;
-      }
-
-      return true;
-
-    });
-
-  if (validCards.length === 0) {
-    return;
-  }
-
-  const randomCard =
-    validCards[
-      Math.floor(Math.random() * validCards.length)
-    ];
-
-  const cardIndex =
-    hands[nextPlayer].indexOf(randomCard);
-
-  hands[nextPlayer].splice(cardIndex, 1);
-showOpponentHands();
-  currentTrick.push({
-    player: nextPlayer,
-    card: randomCard
-  });
-if (currentTrick.length === 1) {
-  leadSuit = randomCard.suit;
-    }
-  showCurrentTrick();
-
-  currentPlayer =
-    players[
-      (players.indexOf(nextPlayer) + 1)
-      % players.length
-    ];
-
-  if (currentTrick.length < 4) {
-
-    if (currentPlayer === "شما") {
-
-      showMyHand();
-
-    } else {
-
-      setTimeout(function() {
-        playNextPlayer();
-      }, 700);
-
-    }
-
-    return;
-  }
-
-  const winner = findTrickWinner();
-
-  addTrickPoint(winner);
-  if (teamScore >= 7 || opponentScore >= 7) {
-
-  const winningTeam =
-    teamScore >= 7 ? "شما و یارت" : "حریف";
-if (teamScore >= 7) {
-  nextKing = "شما";
-} else {
-  nextKing = "بازیکن ۳";
-    }
-  document.getElementById("info").textContent =
-    "🏆 " + winningTeam + " برنده این دست شد!";
-
-  return;
-    }
-  trickLeader = winner;
-  currentPlayer = winner;
-
-  document.getElementById("info").textContent =
-    "🏆 برنده این دور: " + winner;
-
-  setTimeout(function() {
-
-    currentTrick = [];
-    leadSuit = "";
-
-    showCurrentTrick();
-
-    if (trickLeader === "شما") {
-
-      showMyHand();
-
-    } else {
-
-      document.getElementById("info").textContent =
-        "🎴 نوبت " + trickLeader + " است.";
-
-      playNextPlayer();
-
-    }
-
-  }, 1500);
-
-    }
-    function findTrickWinner() {
-  const lead = currentTrick[0].card.suit;
-
-  let winner = currentTrick[0];
-
-  for (let i = 1; i < currentTrick.length; i++) {
-
-    const current = currentTrick[i];
-
-    if (
-      current.card.suit === trump &&
-      winner.card.suit !== trump
-    ) {
-      winner = current;
-      continue;
-    }
-
-    if (
-      current.card.suit === winner.card.suit &&
-      current.card.suit === trump
-    ) {
-      if (
-        ranks.indexOf(current.card.rank) <
-        ranks.indexOf(winner.card.rank)
-      ) {
-        winner = current;
-      }
-      continue;
-    }
-
-    if (
-      winner.card.suit !== trump &&
-      current.card.suit === lead &&
-      winner.card.suit === lead
-    ) {
-      if (
-        ranks.indexOf(current.card.rank) <
-        ranks.indexOf(winner.card.rank)
-      ) {
-        winner = current;
-      }
-    }
-
-  }
-
-  return winner.player;
-    
-    }
   </script>
 
 </body>
-  </html>
+            </html>
