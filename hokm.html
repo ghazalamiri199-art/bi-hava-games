@@ -1164,7 +1164,6 @@ left:[]
 };
 
 hakim = null;
-
 hideAllHakim();
 
 
@@ -1656,7 +1655,9 @@ function startDealing(){
   };
 
   hakim = null;
-
+selectedTrump = null;
+trumpLocked = false;
+    
   hideAllHakim();
   setupCardStacks();
 
@@ -1701,12 +1702,6 @@ function startDealing(){
       dealTimer = null;
 
       showHakim(hakim);
-
-      document.getElementById("statusText").textContent =
-        "👑 حاکم مشخص شد";
-
-      document.getElementById("centerText").textContent =
-        "اولین آس به حاکم رسید";
 
       return;
     }
