@@ -1261,48 +1261,208 @@ finishDealing,
 
 function showHakim(playerId){
 
-hideAllHakim();
+  hideAllHakim();
 
+  const player =
+    players.find(
+      p => p.id === playerId
+    );
 
-const player =
-players.find(
-p => p.id === playerId
-);
+  if(!player){
+    return;
+  }
 
+  const badge =
+    document.getElementById(player.badge);
 
-if(!player){
+  if(badge){
+    badge.classList.add("show");
+  }
 
-return;
+  // کارت‌های مرحله تعیین حاکم جمع می‌شوند
+  document.querySelectorAll(".cardStack").forEach(function(stack){
+    stack.innerHTML = "";
+  });
 
-}
+  // دسته دوباره کاملاً بر زده می‌شود
+  const newDeck =
+    shuffle(createDeck());
 
+  // فقط ۵ کارت به حاکم داده می‌شود
+  playerCards[playerId] = [];
 
-const badge =
-document.getElementById(
-player.badge
-);
+  for(let i = 0; i < 5; i++){
 
+    playerCards[playerId].push(
+      newDeck[i]
+    );
 
-if(badge){
+  }
 
-badge.classList.add("show");
+  document.getElementById("centerCard").textContent = "";
 
-}
+  document.getElementById("centerText").textContent = "";
 
-document.getElementById("centerCard").textContent = "";
-document.getElementById("centerText").textContent = "";
-document.getElementById("statusText").textContent =
-"👑 " +
-player.name +
-" حاکم است";
+  document.getElementById("statusText").textContent =
+    "👑 " + player.name +
+    " حاکم است؛ ۵ کارت خود را ببینید";
 
-}
+  showHakimHand(playerId);
 
+    }
 
 /* ================================================= */
 /* مخفی کردن حاکم‌ها */
 /* ================================================= */
+function showHakimHand(playerId){
 
+  const playerElement =
+    getPlayerElement(playerId);
+
+  if(!playerElement){
+    return;
+  }
+
+  const oldHand =
+    playerElement.querySelector(".hakimHand");
+
+  if(oldHand){
+    oldHand.remove();
+  }
+
+  const hand =
+    document.createElement("div");
+
+  hand.className = "hakimHand";
+
+  const cards =
+    playerCards[playerId];
+
+  cards.forEach(function(cardData, index){
+
+    const card =
+      document.createElement("div");
+
+    card.className = "handCard";
+
+    const suitColor =
+      (cardData.suit === "♥" ||
+       cardData.suit === "♦")
+        ? "#d22"
+        : "#111";
+
+    card.innerHTML =
+      "<span style='color:" +
+      suitColor +
+      "'>" +
+      cardData.rank +
+      "<br>" +
+      cardData.suit +
+      "</span>";
+
+    const middle =
+      index - 2;
+
+    card.style.left =
+      (50 + middle * 28) + "px";
+
+    card.style.transform =
+      "translateX(-50%) rotate(" +
+      (middle * 5) +
+      "deg)";
+
+    card.style.zIndex =
+      index + 1;
+
+    hand.appendChild(card);
+
+  });
+
+  playerElement.appendChild(hand);
+showTrumpButtons(playerId);
+        }
+function showTrumpButtons(playerId){
+
+  const playerElement =
+    getPlayerElement(playerId);
+
+  if(!playerElement){
+    return;
+  }
+
+  const oldButtons =
+    playerElement.querySelector(".trumpButtons");
+
+  if(oldButtons){
+    oldButtons.remove();
+  }
+
+  const buttons =
+    document.createElement("div");
+
+  buttons.className = "trumpButtons";
+
+  const suits = ["♠","♥","♦","♣"];
+
+  suits.forEach(function(suit){
+
+    const button =
+      document.createElement("button");
+
+    button.className = "trumpButton";
+
+    if(suit === "♥" || suit === "♦"){
+      button.classList.add("redSuit");
+    }
+
+    button.textContent = suit;
+
+    button.onclick = function(){
+      chooseTrump(playerId, suit);
+    };
+
+    buttons.appendChild(button);
+
+  });
+
+  playerElement.appendChild(buttons);
+
+        }
+let selectedTrump = null;
+let trumpLocked = false;
+
+function chooseTrump(playerId, suit){
+
+  if(trumpLocked){
+    return;
+  }
+
+  if(playerId !== hakim){
+    return;
+  }
+
+  selectedTrump = suit;
+  trumpLocked = true;
+
+  const playerElement =
+    getPlayerElement(playerId);
+
+  if(playerElement){
+
+    const buttons =
+      playerElement.querySelector(".trumpButtons");
+
+    if(buttons){
+      buttons.remove();
+    }
+
+  }
+
+  document.getElementById("statusText").textContent =
+    "👑 حکم انتخاب شد: " + suit;
+
+      }
+    
 function hideAllHakim(){
 
 document
