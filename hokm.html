@@ -523,7 +523,53 @@ button{
     }
 
 }
+.cardStack{
+  position:absolute;
+  width:42px;
+  height:105px;
+  pointer-events:none;
+  z-index:15;
+}
 
+.stackCard{
+  position:absolute;
+  width:42px;
+  height:58px;
+  border-radius:7px;
+  background:#f7f3e9;
+  color:#222;
+  border:1px solid #ccc;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:19px;
+  box-shadow:0 2px 6px rgba(0,0,0,.3);
+  transition:transform .15s ease;
+}
+
+.playerTop .cardStack{
+  top:82px;
+  left:50%;
+  transform:translateX(-50%);
+}
+
+.playerBottom .cardStack{
+  bottom:82px;
+  left:50%;
+  transform:translateX(-50%);
+}
+
+.playerLeft .cardStack{
+  left:82px;
+  top:50%;
+  transform:translateY(-50%);
+}
+
+.playerRight .cardStack{
+  right:82px;
+  top:50%;
+  transform:translateY(-50%);
+    }
   </style>
 </head>
 <body>
@@ -1289,7 +1335,124 @@ document.getElementById("modePage").style.display =
 "block";
 
 }
+let dealTimer = null;
 
+function getPlayerElement(playerId){
+  const name = playerId.charAt(0).toUpperCase() + playerId.slice(1);
+  return document.querySelector(".player" + name);
+}
+
+function setupCardStacks(){
+  players.forEach(function(player){
+    const playerElement = getPlayerElement(player.id);
+    if(!playerElement) return;
+
+    let stack = playerElement.querySelector(".cardStack");
+
+    if(!stack){
+      stack = document.createElement("div");
+      stack.className = "cardStack";
+      playerElement.appendChild(stack);
+    }
+
+    stack.innerHTML = "";
+  });
+}
+
+function addCardToStack(playerId){
+  const playerElement = getPlayerElement(playerId);
+  if(!playerElement) return;
+
+  const stack = playerElement.querySelector(".cardStack");
+  if(!stack) return;
+
+  const card = document.createElement("div");
+  card.className = "stackCard";
+  card.textContent = "🂠";
+
+  const count = stack.children.length;
+
+  if(playerId === "left" || playerId === "right"){
+    card.style.transform = "translateX(" + Math.min(count * 3, 42) + "px)";
+  }else{
+    card.style.transform = "translateY(" + Math.min(count * 4, 48) + "px)";
+  }
+
+  card.style.zIndex = count + 1;
+
+  stack.appendChild(card);
+}
+
+function startDealing(){
+  if(dealTimer){
+    clearInterval(dealTimer);
+  }
+
+  playerCards = {
+    top:[],
+    right:[],
+    bottom:[],
+    left:[]
+  };
+
+  hakim = null;
+
+  hideAllHakim();
+  setupCardStacks();
+
+  const deck = shuffle(createDeck());
+
+  const order = ["bottom","right","top","left"];
+
+  // شروع کاملاً تصادفی
+  const startIndex = Math.floor(Math.random() * 4);
+
+  let index = 0;
+
+  const centerCard = document.getElementById("centerCard");
+  const centerText = document.getElementById("centerText");
+
+  centerCard.textContent = "🂠";
+  centerText.textContent = "در حال پخش کارت‌ها...";
+
+  document.getElementById("statusText").textContent =
+    "🎴 کارت‌ها در حال پخش هستند...";
+
+  dealTimer = setInterval(function(){
+
+    const playerId =
+      order[(startIndex + index) % 4];
+
+    const card = deck[index];
+
+    playerCards[playerId].push(card);
+
+    // نمایش کارت جلوی همان بازیکن
+    addCardToStack(playerId);
+
+    index++;
+
+    // اولین آس = حاکم
+    if(card.rank === "A" && hakim === null){
+
+      hakim = playerId;
+
+      clearInterval(dealTimer);
+      dealTimer = null;
+
+      showHakim(hakim);
+
+      document.getElementById("statusText").textContent =
+        "👑 حاکم مشخص شد";
+
+      document.getElementById("centerText").textContent =
+        "اولین آس به حاکم رسید";
+
+      return;
+    }
+
+  }, 500);
+    }
 </script>
 
 </body>
