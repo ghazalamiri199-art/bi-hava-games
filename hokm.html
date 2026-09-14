@@ -1360,16 +1360,40 @@ function setupCardStacks(){
 }
 
 function addCardToStack(playerId){
-  const playerElement = getPlayerElement(playerId);
+
+  const playerElement =
+    getPlayerElement(playerId);
+
   if(!playerElement) return;
 
-  const stack = playerElement.querySelector(".cardStack");
+  const stack =
+    playerElement.querySelector(".cardStack");
+
   if(!stack) return;
 
-  const card = document.createElement("div");
-  card.className = "stackCard";
-  card.textContent = "🂠";
+  const cardData =
+    playerCards[playerId][playerCards[playerId].length - 1];
 
+  if(!cardData) return;
+
+  const card =
+    document.createElement("div");
+
+  card.className = "stackCard";
+
+  const suitColor =
+    (cardData.suit === "♥" || cardData.suit === "♦")
+      ? "#d22"
+      : "#111";
+
+  card.innerHTML =
+    "<span style='font-size:15px;font-weight:bold;color:" +
+    suitColor +
+    "'>" +
+    cardData.rank +
+    "<br>" +
+    cardData.suit +
+    "</span>";
   const count = stack.children.length;
 
   if(playerId === "left" || playerId === "right"){
