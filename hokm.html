@@ -1,12 +1,1296 @@
-حکم - Bi Hava Games *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; } html,body{ margin:0; padding:0; width:100%; height:100%; overflow:hidden; font-family:Tahoma,Arial,sans-serif; background:#071b15; color:white; } button{ font-family:inherit; } /* ================= انتخاب حالت ================= */ #modePage{ width:100%; height:100%; overflow-y:auto; padding:30px 18px; background:radial-gradient(circle at top,#17513e,#071b15 65%); } .modeTitleMain{ text-align:center; font-size:30px; font-weight:bold; margin:25px 0 10px; } .modeSubtitle{ text-align:center; color:#b9d4cc; font-size:14px; margin-bottom:30px; } .mode{ width:100%; min-height:82px; margin-bottom:15px; padding:15px; border-radius:20px; background:#12392e; border:1px solid #28604e; display:flex; align-items:center; gap:15px; } .mode:active{ transform:scale(.98); } .modeIcon{ width:55px; height:55px; flex:none; border-radius:50%; background:#1d5947; display:flex; align-items:center; justify-content:center; font-size:27px; } .modeText{ flex:1; } .modeName{ font-size:17px; font-weight:bold; margin-bottom:7px; } .modeDesc{ color:#a9c8bf; font-size:12px; line-height:1.6; } /* ================= صفحه بازی ================= */ #gamePage{ display:none; position:relative; width:100%; height:100%; overflow:hidden; background: radial-gradient( ellipse at center, #197353 0%, #10523e 45%, #061a13 100% ); } /* ================= نوار بالا ================= */ .topBar{ position:absolute; top:12px; left:12px; right:12px; min-height:72px; display:flex; align-items:flex-start; justify-content:space-between; z-index:50; } /* ================= امتیازها ================= */ .scores{ display:flex; gap:7px; } .scoreColumn{ min-width:70px; padding:6px 7px; border-radius:12px; background:rgba(0,0,0,.28); text-align:center; } .scoreTitle{ display:block; font-size:10px; color:#d7e9e3; margin-bottom:4px; } .teamLabels{ display:flex; justify-content:center; gap:13px; font-size:9px; margin-bottom:2px; } .teamNumbers{ display:flex; justify-content:center; gap:18px; font-size:20px; font-weight:bold; line-height:23px; } .green{ color:#5ce68c; } .red{ color:#ff7373; } /* ================= خروج ================= */ .exit{ border:0; color:white; background:rgba(0,0,0,.32); border-radius:11px; padding:9px 13px; font-size:13px; } /* ================= میز ================= */ .table{ position:absolute; left:8%; right:8%; top:11%; bottom:12%; border-radius:50%; background: radial-gradient( ellipse at center, #1a7655 0%, #12543f 65%, #0b3b2d 100% ); border:2px solid rgba(255,255,255,.13); box-shadow: inset 0 0 35px rgba(0,0,0,.18), 0 0 20px rgba(0,0,0,.2); } /* ================= بازیکن‌ها ================= */ .player{ position:absolute; width:90px; height:105px; display:flex; flex-direction:column; align-items:center; z-index:20; } .playerTop{ top:-20px; left:50%; transform:translateX(-50%); } .playerBottom{ bottom:-20px; left:50%; transform:translateX(-50%); } .playerLeft{ left:-30px; top:50%; transform:translateY(-50%); } .playerRight{ right:-30px; top:50%; transform:translateY(-50%); } .avatar{ width:50px; height:50px; border-radius:50%; background:#294f43; border:2px solid rgba(255,255,255,.85); display:flex; align-items:center; justify-content:center; font-size:24px; background-size:cover; background-position:center; flex:none; } .playerName{ margin-top:5px; width:110px; text-align:center; font-size:11px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } /* ================= نشان حاکم ================= */ .hakimBadge{ display:none; margin-top:4px; padding:3px 7px; border-radius:9px; background:rgba(245,190,45,.22); border:1px solid rgba(255,215,80,.65); color:#ffe58a; font-size:10px; font-weight:bold; white-space:nowrap; } .hakimBadge.show{ display:block; } /* ================= وسط میز ================= */ .center{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:180px; text-align:center; z-index:10; } .centerIcon{ font-size:30px; margin-bottom:7px; } .centerText{ color:#d2e8e0; font-size:12px; line-height:1.7; } /* ================= وضعیت پایین ================= */ .status{ position:absolute; bottom:10px; left:0; right:0; text-align:center; color:#c5ded6; font-size:12px; z-index:40; } /* ================= پنجره خروج ================= */ .modal{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.72); z-index:100; align-items:center; justify-content:center; padding:20px; } .modalBox{ width:100%; max-width:330px; padding:22px; border-radius:22px; background:#12392e; border:1px solid #326955; text-align:center; } .modalTitle{ font-size:18px; font-weight:bold; margin-bottom:18px; } .modalButton{ width:100%; border:0; border-radius:13px; padding:14px; margin-top:9px; color:white; font-size:14px; } .leave{ background:#b63d3d; } .stay{ background:#21664f; } /* ================= موبایل ================= */ @media(max-height:650px){ .table{ top:13%; bottom:11%; } .avatar{ width:45px; height:45px; } .player{ height:95px; } } @media(max-width:350px){ .table{ left:10%; right:10%; } .playerLeft{ left:-27px; } .playerRight{ right:-27px; } } 
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<div class="modeTitleMain"> حکم </div> <div class="modeSubtitle"> حالت بازی را انتخاب کن </div> <div class="mode" onclick="startSinglePlayer()"> <div class="modeIcon"> 🤖 </div> <div class="modeText"> <div class="modeName"> بازی تک نفره با ربات‌ها </div> <div class="modeDesc"> تو + یارت + دو ربات حریف </div> </div> </div> <div class="mode" onclick="publicGame()"> <div class="modeIcon"> 🌐 </div> <div class="modeText"> <div class="modeName"> بازی عمومی </div> <div class="modeDesc"> بازی آنلاین را بعداً اضافه می‌کنیم </div> </div> </div> <div class="mode" onclick="friendsGame()"> <div class="modeIcon"> 👥 </div> <div class="modeText"> <div class="modeName"> بازی با دوستان </div> <div class="modeDesc"> دعوت دوستان را بعداً اضافه می‌کنیم </div> </div> </div> 
+<title>حکم - Bi Hava Games</title>
 
-<div class="topBar"> <div class="scores"> <div class="scoreColumn"> <span class="scoreTitle"> راند </span> <div class="teamLabels"> <span class="green"> ما </span> <span class="red"> حریف </span> </div> <div class="teamNumbers"> <span id="roundOurScore" class="green" > 0 </span> <span id="roundEnemyScore" class="red" > 0 </span> </div> </div> <div class="scoreColumn"> <span class="scoreTitle"> دست </span> <div class="teamLabels"> <span class="green"> ما </span> <span class="red"> حریف </span> </div> <div class="teamNumbers"> <span id="handOurScore" class="green" > 0 </span> <span id="handEnemyScore" class="red" > 0 </span> </div> </div> </div> <button class="exit" onclick="showExit()" > خروج </button> </div> <div class="table"> <!-- یار من --> <div class="player playerTop"> <div class="avatar" id="partnerAvatar" > 🤖 </div> <div class="playerName"> یار من </div> <div class="hakimBadge" id="hakimTop" > 👑 حاکم </div> </div> <!-- حریف چپ --> <div class="player playerLeft"> <div class="avatar"> 🤖 </div> <div class="playerName"> ربات حریف </div> <div class="hakimBadge" id="hakimLeft" > 👑 حاکم </div> </div> <!-- حریف راست --> <div class="player playerRight"> <div class="avatar"> 🤖 </div> <div class="playerName"> ربات حریف </div> <div class="hakimBadge" id="hakimRight" > 👑 حاکم </div> </div> <!-- خودم --> <div class="player playerBottom"> <div class="avatar" id="myAvatar" > 👤 </div> <div class="playerName" id="myName" > شما </div> <div class="hakimBadge" id="hakimBottom" > 👑 حاکم </div> </div> <div class="center"> <div class="centerIcon" id="centerIcon" > 🃏 </div> <div class="centerText" id="centerText" > برای شروع، حالت تک‌نفره را انتخاب کن </div> </div> </div> <div class="status" id="statusText" > بازی تک‌نفره با ربات‌ها </div> 
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-<div class="modalBox"> <div class="modalTitle"> می‌خواهی از بازی خارج شوی؟ </div> <button class="modalButton leave" onclick="leaveGame()" > خروج از بازی </button> <button class="modalButton stay" onclick="closeExit()" > نه، توی بازی می‌مونم </button> </div> 
+<style>
 
-/* ================================================= */ /* Telegram */ /* ================================================= */ const tg = window.Telegram?.WebApp; if(tg){ tg.ready(); tg.expand(); } /* ================================================= */ /* اطلاعات بازی */ /* ================================================= */ const players = [ { id:"top", name:"یار من", element:"hakimTop" }, { id:"right", name:"ربات حریف", element:"hakimRight" }, { id:"bottom", name:"شما", element:"hakimBottom" }, { id:"left", name:"ربات حریف", element:"hakimLeft" } ]; let playerCards = { top:[], right:[], bottom:[], left:[] }; let hakim = null; /* ================================================= */ /* شروع بازی تک نفره */ /* ================================================= */ function startSinglePlayer(){ document.getElementById("modePage").style.display = "none"; document.getElementById("gamePage").style.display = "block"; loadTelegramUser(); startDealing(); } /* ================================================= */ /* اطلاعات کاربر تلگرام */ /* ================================================= */ function loadTelegramUser(){ const user = tg?.initDataUnsafe?.user; if(!user){ return; } let name = user.first_name || "شما"; if(user.last_name){ name += " " + user.last_name; } document.getElementById("myName").textContent = name; if(user.photo_url){ const avatar = document.getElementById("myAvatar"); avatar.style.backgroundImage = "url('" + user.photo_url + "')"; avatar.textContent = ""; } } /* ================================================= */ /* ساخت دسته کارت */ /* ================================================= */ function createDeck(){ const suits = ["♠","♥","♦","♣"]; const ranks = [ "2","3","4","5","6","7","8", "9","10","J","Q","K","A" ]; const deck = []; for(const suit of suits){ for(const rank of ranks){ deck.push({ suit:suit, rank:rank }); } } return deck; } /* ================================================= */ /* بر زدن کارت‌ها */ /* ================================================= */ function shuffle(deck){ for(let i = deck.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [deck[i],deck[j]] = [deck[j],deck[i]]; } return deck; } /* ================================================= */ /* پخش کارت یکی‌یکی */ /* ================================================= */ function startDealing(){ playerCards = { top:[], right:[], bottom:[], left:[] }; hakim = null; hideAllHakim(); const deck = shuffle(createDeck()); const order = [ "bottom", "right", "top", "left" ]; let index = 0; const totalCards = 52; document.getElementById("centerIcon").textContent = "🃏"; document.getElementById("centerText").innerHTML = "کارت‌ها در حال پخش شدن...
-هر کارت یکی‌یکی پخش می‌شود"; document.getElementById("statusText").textContent = "در حال پخش کارت‌ها..."; const timer = setInterval(() => { const playerId = order[index % 4]; const card = deck[index]; playerCards[playerId].push(card); index++; if(card.rank === "A" && !hakim){ hakim = playerId; showHakim(hakim); } if(index >= totalCards){ clearInterval(timer); setTimeout(() => { finishDealing(); },800); } },120); } /* ================================================= */ /* نمایش حاکم */ /* ================================================= */ function showHakim(playerId){ hideAllHakim(); const badgeId = players.find( p => p.id === playerId ).element; document .getElementById(badgeId) .classList.add("show"); const playerName = players.find( p => p.id === playerId ).name; document.getElementById("centerIcon").textContent = "👑"; document.getElementById("centerText").innerHTML = playerName + " حاکم شد!
-آس به او رسید"; document.getElementById("statusText").textContent = "👑 " + playerName + " حاکم است"; } /* ================================================= */ /* مخفی کردن نشان‌های حاکم */ /* ================================================= */ function hideAllHakim(){ document .querySelectorAll(".hakimBadge") .forEach(badge => { badge.classList.remove("show"); }); } /* ================================================= */ /* پایان پخش کارت */ /* ================================================= */ function finishDealing(){ document.getElementById("centerIcon").textContent = "👑"; const playerName = players.find( p => p.id === hakim ).name; document.getElementById("centerText").innerHTML = "حاکم مشخص شد
-" + playerName + " حاکم است"; document.getElementById("statusText").textContent = "👑 " + playerName + " حاکم است"; } /* ================================================= */ /* بازی عمومی */ /* ================================================= */ function publicGame(){ alert( "بازی عمومی و آنلاین را فعلاً بعداً اضافه می‌کنیم ❤️" ); } /* ================================================= */ /* بازی با دوستان */ /* ================================================= */ function friendsGame(){ alert( "بازی با دوستان را فعلاً بعداً آنلاین می‌کنیم ❤️" ); } /* ================================================= */ /* خروج */ /* ================================================= */ function showExit(){ document.getElementById("exitModal").style.display = "flex"; } function closeExit(){ document.getElementById("exitModal").style.display = "none"; } function leaveGame(){ document.getElementById("exitModal").style.display = "none"; document.getElementById("gamePage").style.display = "none"; document.getElementById("modePage").style.display = "block"; } 
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    font-family:Tahoma,Arial,sans-serif;
+    background:#071b15;
+    color:white;
+}
+
+button{
+    font-family:inherit;
+}
+
+
+/* ================= صفحه انتخاب حالت ================= */
+
+#modePage{
+    width:100%;
+    height:100%;
+    overflow-y:auto;
+    padding:30px 18px;
+    background:
+        radial-gradient(
+            circle at top,
+            #17513e,
+            #071b15 65%
+        );
+}
+
+.modeTitleMain{
+    text-align:center;
+    font-size:30px;
+    font-weight:bold;
+    margin:25px 0 10px;
+}
+
+.modeSubtitle{
+    text-align:center;
+    color:#b9d4cc;
+    font-size:14px;
+    margin-bottom:30px;
+}
+
+.mode{
+    width:100%;
+    min-height:82px;
+    margin-bottom:15px;
+    padding:15px;
+    border-radius:20px;
+    background:#12392e;
+    border:1px solid #28604e;
+    display:flex;
+    align-items:center;
+    gap:15px;
+    cursor:pointer;
+}
+
+.mode:active{
+    transform:scale(.98);
+}
+
+.modeIcon{
+    width:55px;
+    height:55px;
+    flex:none;
+    border-radius:50%;
+    background:#1d5947;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:27px;
+}
+
+.modeText{
+    flex:1;
+}
+
+.modeName{
+    font-size:17px;
+    font-weight:bold;
+    margin-bottom:7px;
+}
+
+.modeDesc{
+    color:#a9c8bf;
+    font-size:12px;
+    line-height:1.6;
+}
+
+
+/* ================= صفحه بازی ================= */
+
+#gamePage{
+    display:none;
+    position:relative;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            #197353 0%,
+            #10523e 45%,
+            #061a13 100%
+        );
+}
+
+
+/* ================= نوار بالا ================= */
+
+.topBar{
+    position:absolute;
+    top:12px;
+    left:12px;
+    right:12px;
+    min-height:72px;
+
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+
+    z-index:50;
+}
+
+
+/* ================= امتیازها ================= */
+
+.scores{
+    display:flex;
+    gap:7px;
+}
+
+.scoreColumn{
+    min-width:70px;
+    padding:6px 7px;
+    border-radius:12px;
+    background:rgba(0,0,0,.28);
+    text-align:center;
+}
+
+.scoreTitle{
+    display:block;
+    font-size:10px;
+    color:#d7e9e3;
+    margin-bottom:4px;
+}
+
+.teamLabels{
+    display:flex;
+    justify-content:center;
+    gap:13px;
+    font-size:9px;
+    margin-bottom:2px;
+}
+
+.teamNumbers{
+    display:flex;
+    justify-content:center;
+    gap:18px;
+    font-size:20px;
+    font-weight:bold;
+    line-height:23px;
+}
+
+.green{
+    color:#5ce68c;
+}
+
+.red{
+    color:#ff7373;
+}
+
+
+/* ================= دکمه خروج ================= */
+
+.exit{
+    border:0;
+    color:white;
+    background:rgba(0,0,0,.32);
+    border-radius:11px;
+    padding:9px 13px;
+    font-size:13px;
+    cursor:pointer;
+}
+
+
+/* ================= میز ================= */
+
+.table{
+    position:absolute;
+
+    left:8%;
+    right:8%;
+    top:11%;
+    bottom:12%;
+
+    border-radius:50%;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            #1a7655 0%,
+            #12543f 65%,
+            #0b3b2d 100%
+        );
+
+    border:2px solid rgba(255,255,255,.13);
+
+    box-shadow:
+        inset 0 0 35px rgba(0,0,0,.18),
+        0 0 20px rgba(0,0,0,.2);
+}
+
+
+/* ================= بازیکن‌ها ================= */
+
+.player{
+    position:absolute;
+
+    width:90px;
+    min-height:105px;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+
+    z-index:20;
+}
+
+.playerTop{
+    top:-20px;
+    left:50%;
+    transform:translateX(-50%);
+}
+
+.playerBottom{
+    bottom:-20px;
+    left:50%;
+    transform:translateX(-50%);
+}
+
+.playerLeft{
+    left:-30px;
+    top:50%;
+    transform:translateY(-50%);
+}
+
+.playerRight{
+    right:-30px;
+    top:50%;
+    transform:translateY(-50%);
+}
+
+
+/* ================= آواتار ================= */
+
+.avatar{
+    width:50px;
+    height:50px;
+
+    border-radius:50%;
+
+    background:#294f43;
+
+    border:2px solid rgba(255,255,255,.85);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:24px;
+
+    background-size:cover;
+    background-position:center;
+
+    flex:none;
+}
+
+
+/* ================= اسم ================= */
+
+.playerName{
+    margin-top:5px;
+
+    width:110px;
+
+    text-align:center;
+
+    font-size:11px;
+
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+
+/* ================= حاکم ================= */
+
+.hakimBadge{
+    display:none;
+
+    margin-top:4px;
+
+    padding:3px 8px;
+
+    border-radius:9px;
+
+    background:rgba(245,190,45,.22);
+
+    border:1px solid rgba(255,215,80,.65);
+
+    color:#ffe58a;
+
+    font-size:10px;
+
+    font-weight:bold;
+
+    white-space:nowrap;
+}
+
+.hakimBadge.show{
+    display:block;
+}
+
+
+/* ================= مرکز میز ================= */
+
+.center{
+    position:absolute;
+
+    top:50%;
+    left:50%;
+
+    transform:translate(-50%,-50%);
+
+    width:190px;
+
+    text-align:center;
+
+    z-index:10;
+}
+
+.centerIcon{
+    font-size:32px;
+    margin-bottom:7px;
+}
+
+.centerText{
+    color:#d2e8e0;
+    font-size:12px;
+    line-height:1.8;
+}
+
+
+/* ================= وضعیت پایین ================= */
+
+.status{
+    position:absolute;
+
+    bottom:10px;
+    left:0;
+    right:0;
+
+    text-align:center;
+
+    color:#c5ded6;
+
+    font-size:12px;
+
+    z-index:40;
+}
+
+
+/* ================= پنجره خروج ================= */
+
+.modal{
+    display:none;
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.72);
+
+    z-index:100;
+
+    align-items:center;
+    justify-content:center;
+
+    padding:20px;
+}
+
+.modalBox{
+    width:100%;
+    max-width:330px;
+
+    padding:22px;
+
+    border-radius:22px;
+
+    background:#12392e;
+
+    border:1px solid #326955;
+
+    text-align:center;
+}
+
+.modalTitle{
+    font-size:18px;
+    font-weight:bold;
+
+    margin-bottom:18px;
+}
+
+.modalButton{
+    width:100%;
+
+    border:0;
+
+    border-radius:13px;
+
+    padding:14px;
+
+    margin-top:9px;
+
+    color:white;
+
+    font-size:14px;
+
+    cursor:pointer;
+}
+
+.leave{
+    background:#b63d3d;
+}
+
+.stay{
+    background:#21664f;
+}
+
+
+/* ================= کارت کوچک وسط ================= */
+
+.dealingCard{
+    width:42px;
+    height:58px;
+
+    border-radius:7px;
+
+    background:#f7f3e9;
+
+    color:#222;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    margin:0 auto 9px;
+
+    font-size:20px;
+
+    box-shadow:
+        0 3px 10px rgba(0,0,0,.3);
+}
+
+
+/* ================= موبایل کوچک ================= */
+
+@media(max-height:650px){
+
+    .table{
+        top:13%;
+        bottom:11%;
+    }
+
+    .avatar{
+        width:45px;
+        height:45px;
+    }
+
+    .player{
+        min-height:95px;
+    }
+
+}
+
+
+/* ================= صفحه خیلی باریک ================= */
+
+@media(max-width:350px){
+
+    .table{
+        left:10%;
+        right:10%;
+    }
+
+    .playerLeft{
+        left:-27px;
+    }
+
+    .playerRight{
+        right:-27px;
+    }
+
+}
+
+  </style>
+</head>
+<body>
+
+<div id="modePage">
+
+<div class="modeTitleMain">
+حکم
+</div>
+
+<div class="modeSubtitle">
+حالت بازی را انتخاب کن
+</div>
+
+<div class="mode" onclick="startSinglePlayer()">
+
+<div class="modeIcon">
+🤖
+</div>
+
+<div class="modeText">
+
+<div class="modeName">
+بازی تک نفره با ربات‌ها
+</div>
+
+<div class="modeDesc">
+تو + یارت + دو ربات حریف
+</div>
+
+</div>
+
+</div>
+
+<div class="mode" onclick="publicGame()">
+
+<div class="modeIcon">
+🌐
+</div>
+
+<div class="modeText">
+
+<div class="modeName">
+بازی عمومی
+</div>
+
+<div class="modeDesc">
+بازی آنلاین را بعداً اضافه می‌کنیم
+</div>
+
+</div>
+
+</div>
+
+<div class="mode" onclick="friendsGame()">
+
+<div class="modeIcon">
+👥
+</div>
+
+<div class="modeText">
+
+<div class="modeName">
+بازی با دوستان
+</div>
+
+<div class="modeDesc">
+دعوت دوستان را بعداً اضافه می‌کنیم
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div id="gamePage">
+
+<div class="topBar">
+
+<div class="scores">
+
+<div class="scoreColumn">
+
+<span class="scoreTitle">
+راند
+</span>
+
+<div class="teamLabels">
+
+<span class="green">
+ما
+</span>
+
+<span class="red">
+حریف
+</span>
+
+</div>
+
+<div class="teamNumbers">
+
+<span id="roundOurScore" class="green">
+0
+</span>
+
+<span id="roundEnemyScore" class="red">
+0
+</span>
+
+</div>
+
+</div>
+
+
+<div class="scoreColumn">
+
+<span class="scoreTitle">
+دست
+</span>
+
+<div class="teamLabels">
+
+<span class="green">
+ما
+</span>
+
+<span class="red">
+حریف
+</span>
+
+</div>
+
+<div class="teamNumbers">
+
+<span id="handOurScore" class="green">
+0
+</span>
+
+<span id="handEnemyScore" class="red">
+0
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+
+<button class="exit" onclick="showExit()">
+خروج
+</button>
+
+</div>
+
+
+<div class="table">
+
+<div class="player playerTop">
+
+<div class="avatar" id="partnerAvatar">
+🤖
+</div>
+
+<div class="playerName">
+یار من
+</div>
+
+<div class="hakimBadge" id="hakimTop">
+👑 حاکم
+</div>
+
+</div>
+
+
+<div class="player playerLeft">
+
+<div class="avatar">
+🤖
+</div>
+
+<div class="playerName">
+ربات حریف
+</div>
+
+<div class="hakimBadge" id="hakimLeft">
+👑 حاکم
+</div>
+
+</div>
+
+
+<div class="player playerRight">
+
+<div class="avatar">
+🤖
+</div>
+
+<div class="playerName">
+ربات حریف
+</div>
+
+<div class="hakimBadge" id="hakimRight">
+👑 حاکم
+</div>
+
+</div>
+
+
+<div class="player playerBottom">
+
+<div class="avatar" id="myAvatar">
+👤
+</div>
+
+<div class="playerName" id="myName">
+شما
+</div>
+
+<div class="hakimBadge" id="hakimBottom">
+👑 حاکم
+</div>
+
+</div>
+
+
+<div class="center">
+
+<div id="centerCard" class="dealingCard">
+🂠
+</div>
+
+<div class="centerText" id="centerText">
+برای شروع، حالت تک‌نفره را انتخاب کن
+</div>
+
+</div>
+
+</div>
+
+
+<div class="status" id="statusText">
+بازی تک‌نفره با ربات‌ها
+</div>
+
+  </div>
+  <!-- پنجره خروج -->
+
+<div class="modal" id="exitModal">
+
+<div class="modalBox">
+
+<div class="modalTitle">
+می‌خواهی از بازی خارج شوی؟
+</div>
+
+<button
+class="modalButton leave"
+onclick="leaveGame()"
+>
+خروج از بازی
+</button>
+
+<button
+class="modalButton stay"
+onclick="closeExit()"
+>
+نه، توی بازی می‌مونم
+</button>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* ================================================= */
+/* Telegram */
+/* ================================================= */
+
+const tg = window.Telegram?.WebApp;
+
+if(tg){
+
+tg.ready();
+
+tg.expand();
+
+}
+
+
+/* ================================================= */
+/* بازیکنان */
+/* ================================================= */
+
+const players = [
+
+{
+id:"top",
+name:"یار من",
+badge:"hakimTop"
+},
+
+{
+id:"right",
+name:"ربات حریف",
+badge:"hakimRight"
+},
+
+{
+id:"bottom",
+name:"شما",
+badge:"hakimBottom"
+},
+
+{
+id:"left",
+name:"ربات حریف",
+badge:"hakimLeft"
+}
+
+];
+
+
+/* ================================================= */
+/* متغیرهای بازی */
+/* ================================================= */
+
+let playerCards = {
+
+top:[],
+right:[],
+bottom:[],
+left:[]
+
+};
+
+let hakim = null;
+
+
+/* ================================================= */
+/* شروع بازی */
+/* ================================================= */
+
+function startSinglePlayer(){
+
+document.getElementById("modePage").style.display =
+"none";
+
+document.getElementById("gamePage").style.display =
+"block";
+
+loadTelegramUser();
+
+startDealing();
+
+}
+
+
+/* ================================================= */
+/* اطلاعات تلگرام */
+/* ================================================= */
+
+function loadTelegramUser(){
+
+const user =
+tg?.initDataUnsafe?.user;
+
+if(!user){
+
+return;
+
+}
+
+let name =
+user.first_name || "شما";
+
+if(user.last_name){
+
+name +=
+" " + user.last_name;
+
+}
+
+document.getElementById("myName").textContent =
+name;
+
+
+if(user.photo_url){
+
+const avatar =
+document.getElementById("myAvatar");
+
+avatar.style.backgroundImage =
+"url('" + user.photo_url + "')";
+
+avatar.textContent = "";
+
+}
+
+}
+
+
+/* ================================================= */
+/* ساخت دسته ۵۲ کارتی */
+/* ================================================= */
+
+function createDeck(){
+
+const suits = [
+
+"♠",
+"♥",
+"♦",
+"♣"
+
+];
+
+const ranks = [
+
+"2",
+"3",
+"4",
+"5",
+"6",
+"7",
+"8",
+"9",
+"10",
+"J",
+"Q",
+"K",
+"A"
+
+];
+
+const deck = [];
+
+for(const suit of suits){
+
+for(const rank of ranks){
+
+deck.push({
+
+suit:suit,
+rank:rank
+
+});
+
+}
+
+}
+
+return deck;
+
+}
+
+
+/* ================================================= */
+/* بر زدن */
+/* ================================================= */
+
+function shuffle(deck){
+
+for(
+let i = deck.length - 1;
+i > 0;
+i--
+){
+
+const j =
+Math.floor(
+Math.random() * (i + 1)
+);
+
+[
+deck[i],
+deck[j]
+] = [
+deck[j],
+deck[i]
+];
+
+}
+
+return deck;
+
+}
+
+
+/* ================================================= */
+/* شروع پخش کارت */
+/* ================================================= */
+
+function startDealing(){
+
+playerCards = {
+
+top:[],
+right:[],
+bottom:[],
+left:[]
+
+};
+
+hakim = null;
+
+hideAllHakim();
+
+
+const deck =
+shuffle(createDeck());
+
+
+const order = [
+
+"bottom",
+"right",
+"top",
+"left"
+
+];
+
+
+let index = 0;
+
+const totalCards = 52;
+
+
+const centerCard =
+document.getElementById("centerCard");
+
+const centerText =
+document.getElementById("centerText");
+
+
+centerCard.textContent =
+"🂠";
+
+
+centerText.innerHTML =
+"کارت‌ها در حال پخش شدن...<br>" +
+"هر کارت یکی‌یکی پخش می‌شود";
+
+
+document.getElementById("statusText").textContent =
+"در حال پخش کارت‌ها...";
+
+
+const timer =
+setInterval(function(){
+
+const playerId =
+order[index % 4];
+
+
+const card =
+deck[index];
+
+
+playerCards[playerId].push(card);
+
+
+centerCard.textContent =
+card.suit;
+
+
+index++;
+
+
+if(
+card.rank === "A" &&
+hakim === null
+){
+
+hakim =
+playerId;
+
+showHakim(hakim);
+
+}
+
+
+if(index >= totalCards){
+
+clearInterval(timer);
+
+setTimeout(
+finishDealing,
+800
+);
+
+}
+
+},120);
+
+}
+   /* ================================================= */
+/* نمایش حاکم */
+/* ================================================= */
+
+function showHakim(playerId){
+
+hideAllHakim();
+
+
+const player =
+players.find(
+p => p.id === playerId
+);
+
+
+if(!player){
+
+return;
+
+}
+
+
+const badge =
+document.getElementById(
+player.badge
+);
+
+
+if(badge){
+
+badge.classList.add("show");
+
+}
+
+
+document.getElementById("centerCard").textContent =
+"👑";
+
+
+document.getElementById("centerText").innerHTML =
+player.name +
+" حاکم شد!<br>" +
+"آس به او رسید";
+
+
+document.getElementById("statusText").textContent =
+"👑 " +
+player.name +
+" حاکم است";
+
+}
+
+
+/* ================================================= */
+/* مخفی کردن حاکم‌ها */
+/* ================================================= */
+
+function hideAllHakim(){
+
+document
+.querySelectorAll(".hakimBadge")
+.forEach(function(badge){
+
+badge.classList.remove("show");
+
+});
+
+}
+
+
+/* ================================================= */
+/* پایان پخش کارت */
+/* ================================================= */
+
+function finishDealing(){
+
+const player =
+players.find(
+p => p.id === hakim
+);
+
+
+if(!player){
+
+return;
+
+}
+
+
+document.getElementById("centerCard").textContent =
+"👑";
+
+
+document.getElementById("centerText").innerHTML =
+"حاکم مشخص شد<br>" +
+player.name +
+" حاکم است";
+
+
+document.getElementById("statusText").textContent =
+"👑 " +
+player.name +
+" حاکم است";
+
+}
+
+
+/* ================================================= */
+/* بازی عمومی */
+/* ================================================= */
+
+function publicGame(){
+
+alert(
+"بازی عمومی و آنلاین را فعلاً بعداً اضافه می‌کنیم ❤️"
+);
+
+}
+
+
+/* ================================================= */
+/* بازی با دوستان */
+/* ================================================= */
+
+function friendsGame(){
+
+alert(
+"بازی با دوستان را فعلاً بعداً آنلاین می‌کنیم ❤️"
+);
+
+}
+
+
+/* ================================================= */
+/* خروج */
+/* ================================================= */
+
+function showExit(){
+
+document.getElementById("exitModal").style.display =
+"flex";
+
+}
+
+
+function closeExit(){
+
+document.getElementById("exitModal").style.display =
+"none";
+
+}
+
+
+function leaveGame(){
+
+document.getElementById("exitModal").style.display =
+"none";
+
+document.getElementById("gamePage").style.display =
+"none";
+
+document.getElementById("modePage").style.display =
+"block";
+
+}
+
+</script>
+
+</body>
+</html>
