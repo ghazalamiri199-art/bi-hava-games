@@ -1,1089 +1,936 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
-
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-  <meta charset="UTF-8">
+<title>حکم - Bi Hava Games</title>
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-  <title>حکم | Bi Hava Games</title>
+<style>
 
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
 
-  <style>
+html,body{
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    font-family:Tahoma,Arial,sans-serif;
+    background:#071b15;
+    color:white;
+}
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+button{
+    font-family:inherit;
+}
 
-    body {
-      min-height: 100vh;
-      font-family: Tahoma, Arial, sans-serif;
-      background:
+/* ================= انتخاب حالت ================= */
+
+#modePage{
+    width:100%;
+    height:100%;
+    overflow-y:auto;
+    padding:30px 18px;
+    background:radial-gradient(circle at top,#17513e,#071b15 65%);
+}
+
+.modeTitleMain{
+    text-align:center;
+    font-size:30px;
+    font-weight:bold;
+    margin:25px 0 10px;
+}
+
+.modeSubtitle{
+    text-align:center;
+    color:#b9d4cc;
+    font-size:14px;
+    margin-bottom:30px;
+}
+
+.mode{
+    width:100%;
+    min-height:82px;
+    margin-bottom:15px;
+    padding:15px;
+    border-radius:20px;
+    background:#12392e;
+    border:1px solid #28604e;
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.mode:active{
+    transform:scale(.98);
+}
+
+.modeIcon{
+    width:55px;
+    height:55px;
+    flex:none;
+    border-radius:50%;
+    background:#1d5947;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:27px;
+}
+
+.modeText{
+    flex:1;
+}
+
+.modeName{
+    font-size:17px;
+    font-weight:bold;
+    margin-bottom:7px;
+}
+
+.modeDesc{
+    color:#a9c8bf;
+    font-size:12px;
+    line-height:1.6;
+}
+
+/* ================= صفحه بازی ================= */
+
+#gamePage{
+    display:none;
+    position:relative;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+
+    background:
         radial-gradient(
-          circle at top,
-          #263b32 0%,
-          #10231c 48%,
-          #08130f 100%
+            ellipse at center,
+            #197353 0%,
+            #10523e 45%,
+            #061a13 100%
         );
-      color: white;
-    }
+}
 
-    button {
-      font-family: inherit;
-    }
+/* ================= نوار بالا ================= */
 
+.topBar{
+    position:absolute;
+    top:12px;
+    left:12px;
+    right:12px;
+    min-height:72px;
 
-    /* =========================
-       صفحه انتخاب نوع بازی
-    ========================= */
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
 
-    #modePage {
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
+    z-index:50;
+}
 
-    .page {
-      width: 100%;
-      max-width: 430px;
-      text-align: center;
-    }
+/* ================= امتیازها ================= */
 
-    .top {
-      margin-bottom: 35px;
-    }
+.scores{
+    display:flex;
+    gap:7px;
+}
 
-    .crown {
-      font-size: 48px;
-      margin-bottom: 10px;
-    }
+/* هر ستون امتیاز */
 
-    h1 {
-      font-size: 30px;
-      margin-bottom: 10px;
-    }
+.scoreColumn{
+    min-width:70px;
+    padding:6px 7px;
 
-    .subtitle {
-      color: #c8d4cf;
-      font-size: 15px;
-      line-height: 1.8;
-    }
+    border-radius:12px;
 
-    .options {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
+    background:rgba(0,0,0,.28);
 
-    .game-option {
-      width: 100%;
-      border: none;
-      border-radius: 20px;
-      padding: 19px 18px;
-      background: rgba(255,255,255,0.09);
-      border: 1px solid rgba(255,255,255,0.12);
-      color: white;
-      display: flex;
-      align-items: center;
-      text-align: right;
-      cursor: pointer;
-      transition: 0.2s;
-    }
+    text-align:center;
+}
 
-    .game-option:active {
-      transform: scale(0.97);
-      background: rgba(255,255,255,0.16);
-    }
+/* عنوان راند / دست */
 
-    .icon {
-      width: 54px;
-      height: 54px;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: rgba(255,255,255,0.12);
-      font-size: 27px;
-      margin-left: 15px;
-      flex-shrink: 0;
-    }
+.scoreTitle{
+    display:block;
 
-    .text {
-      flex: 1;
-    }
+    font-size:10px;
 
-    .title {
-      display: block;
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 6px;
-    }
+    color:#d7e9e3;
 
-    .description {
-      display: block;
-      color: #b9c8c1;
-      font-size: 12px;
-      line-height: 1.6;
-    }
+    margin-bottom:4px;
+}
 
-    .arrow {
-      font-size: 22px;
-      color: #9db0a7;
-      margin-right: 8px;
-    }
+/* عنوان تیم‌ها */
 
-    .back {
-      margin-top: 25px;
-      background: transparent;
-      border: none;
-      color: #b8c7c0;
-      font-size: 14px;
-      padding: 10px 20px;
-      cursor: pointer;
-    }
+.teamLabels{
+    display:flex;
+    justify-content:center;
+    gap:13px;
 
+    font-size:9px;
 
-    /* =========================
-       اتاق انتظار عمومی
-    ========================= */
+    margin-bottom:2px;
+}
 
-    #publicRoom {
-      display: none;
-      min-height: 100vh;
-      padding: 18px;
-      position: relative;
-    }
+/* عددها */
 
-    .room-header {
-      height: 55px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
-    }
+.teamNumbers{
+    display:flex;
+    justify-content:center;
+    gap:18px;
 
-    .room-title {
-      font-size: 20px;
-      font-weight: bold;
-    }
+    font-size:20px;
+    font-weight:bold;
+    line-height:23px;
+}
 
-    .exit-button {
-      width: 42px;
-      height: 42px;
-      border: 0;
-      border-radius: 13px;
-      background: rgba(255,255,255,0.09);
-      color: white;
-      font-size: 20px;
-      cursor: pointer;
-    }
+.green{
+    color:#5ce68c;
+}
 
-    .room-info {
-      text-align: center;
-      color: #aebfb8;
-      font-size: 13px;
-      margin-bottom: 15px;
-    }
+.red{
+    color:#ff7373;
+}
 
+/* دکمه خروج */
 
-    /* میز */
+.exit{
+    border:0;
+    color:white;
+    background:rgba(0,0,0,.32);
+    border-radius:11px;
+    padding:9px 13px;
+    font-size:13px;
+}
 
-    .table-area {
-      position: relative;
-      width: 100%;
-      max-width: 430px;
-      height: 470px;
-      margin: 0 auto;
-    }
+/* ================= میز ================= */
 
-    .table {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
+.table{
+    position:absolute;
 
-      width: 230px;
-      height: 300px;
+    left:8%;
+    right:8%;
+    top:11%;
+    bottom:12%;
 
-      border-radius: 48%;
-      background:
+    border-radius:50%;
+
+    background:
         radial-gradient(
-          ellipse at center,
-          #1e5b42 0%,
-          #164633 65%,
-          #103126 100%
+            ellipse at center,
+            #1a7655 0%,
+            #12543f 65%,
+            #0b3b2d 100%
         );
 
-      border: 4px solid rgba(255,255,255,0.08);
+    border:2px solid rgba(255,255,255,.13);
 
-      box-shadow:
-        0 15px 40px rgba(0,0,0,0.4),
-        inset 0 0 30px rgba(0,0,0,0.25);
+    box-shadow:
+        inset 0 0 35px rgba(0,0,0,.18),
+        0 0 20px rgba(0,0,0,.2);
+}
+
+/* ================= بازیکن‌ها ================= */
+
+.player{
+    position:absolute;
+
+    width:75px;
+    height:82px;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+
+    z-index:20;
+}
+
+/* بالا */
+
+.playerTop{
+    top:-20px;
+    left:50%;
+    transform:translateX(-50%);
+}
+
+/* پایین */
+
+.playerBottom{
+    bottom:-20px;
+    left:50%;
+    transform:translateX(-50%);
+}
+
+/* چپ */
+
+.playerLeft{
+    left:-30px;
+    top:50%;
+    transform:translateY(-50%);
+}
+
+/* راست */
+
+.playerRight{
+    right:-30px;
+    top:50%;
+    transform:translateY(-50%);
+}
+
+/* آواتار */
+
+.avatar{
+    width:50px;
+    height:50px;
+
+    border-radius:50%;
+
+    background:#294f43;
+
+    border:2px solid rgba(255,255,255,.85);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:24px;
+
+    background-size:cover;
+    background-position:center;
+
+    flex:none;
+}
+
+/* اسم */
+
+.playerName{
+    margin-top:5px;
+
+    width:100px;
+
+    text-align:center;
+
+    font-size:11px;
+
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+/* ================= وسط میز ================= */
+
+.center{
+    position:absolute;
+
+    top:50%;
+    left:50%;
+
+    transform:translate(-50%,-50%);
+
+    width:150px;
+
+    text-align:center;
+
+    z-index:10;
+}
+
+.centerIcon{
+    font-size:30px;
+    margin-bottom:7px;
+}
+
+.centerText{
+    color:#d2e8e0;
+    font-size:12px;
+    line-height:1.7;
+}
+
+/* ================= وضعیت پایین ================= */
+
+.status{
+    position:absolute;
+
+    bottom:10px;
+    left:0;
+    right:0;
+
+    text-align:center;
+
+    color:#c5ded6;
+
+    font-size:12px;
+
+    z-index:40;
+}
+
+/* ================= پنجره خروج ================= */
+
+.modal{
+    display:none;
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.72);
+
+    z-index:100;
+
+    align-items:center;
+    justify-content:center;
+
+    padding:20px;
+}
+
+.modalBox{
+    width:100%;
+    max-width:330px;
+
+    padding:22px;
+
+    border-radius:22px;
+
+    background:#12392e;
+
+    border:1px solid #326955;
+
+    text-align:center;
+}
+
+.modalTitle{
+    font-size:18px;
+    font-weight:bold;
+
+    margin-bottom:18px;
+}
+
+.modalButton{
+    width:100%;
+
+    border:0;
+
+    border-radius:13px;
+
+    padding:14px;
+
+    margin-top:9px;
+
+    color:white;
+
+    font-size:14px;
+}
+
+.leave{
+    background:#b63d3d;
+}
+
+.stay{
+    background:#21664f;
+}
+
+/* ================= موبایل کوچک ================= */
+
+@media(max-height:650px){
+
+    .table{
+        top:13%;
+        bottom:11%;
     }
 
-    .table-text {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      width: 100%;
-      text-align: center;
-      color: rgba(255,255,255,0.35);
-      font-size: 13px;
+    .avatar{
+        width:45px;
+        height:45px;
     }
 
-
-    /* جایگاه بازیکنان */
-
-    .seat {
-      position: absolute;
-      width: 100px;
-      text-align: center;
+    .player{
+        height:75px;
     }
 
-    .seat-top {
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
+}
+
+/* ================= صفحه خیلی باریک ================= */
+
+@media(max-width:350px){
+
+    .table{
+        left:10%;
+        right:10%;
     }
 
-    .seat-bottom {
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
+    .playerLeft{
+        left:-27px;
     }
 
-    .seat-left {
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
+    .playerRight{
+        right:-27px;
     }
 
-    .seat-right {
-      right: 0;
-      top: 50%;
-      transform: translateY(-50%);
-    }
+}
 
-
-    .avatar {
-      width: 62px;
-      height: 62px;
-      margin: 0 auto 7px;
-
-      border-radius: 50%;
-
-      background: #263e35;
-
-      border: 2px solid rgba(255,255,255,0.15);
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      font-size: 28px;
-
-      overflow: hidden;
-    }
-
-    .avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .player-name {
-      font-size: 12px;
-      font-weight: bold;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-
-    /* جای خالی */
-
-    .empty-seat {
-      cursor: pointer;
-    }
-
-    .empty-seat .avatar {
-      border: 2px dashed rgba(255,255,255,0.25);
-      background: rgba(255,255,255,0.05);
-      color: #8fa49b;
-      font-size: 25px;
-    }
-
-    .empty-seat .player-name {
-      color: #8fa49b;
-    }
-
-
-    /* شمارش معکوس */
-
-    .countdown {
-      position: absolute;
-
-      left: 50%;
-      top: 50%;
-
-      transform: translate(-50%, -50%);
-
-      width: 70px;
-      height: 70px;
-
-      border-radius: 50%;
-
-      background: rgba(7,24,17,0.82);
-
-      border: 3px solid rgba(255,255,255,0.15);
-
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-
-      z-index: 5;
-
-      box-shadow: 0 5px 20px rgba(0,0,0,0.35);
-    }
-
-    .countdown-number {
-      font-size: 25px;
-      font-weight: bold;
-    }
-
-    .countdown-text {
-      font-size: 8px;
-      color: #9daf a8;
-      color: #9daea8;
-      margin-top: 2px;
-    }
-
-
-    /* دعوت */
-
-    .invite-hint {
-      text-align: center;
-      color: #879b93;
-      font-size: 11px;
-      margin-top: 5px;
-    }
-
-
-    /* =========================
-       پنجره خروج
-    ========================= */
-
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-
-      background: rgba(0,0,0,0.7);
-
-      display: none;
-
-      align-items: center;
-      justify-content: center;
-
-      padding: 20px;
-
-      z-index: 100;
-    }
-
-    .modal-overlay.show {
-      display: flex;
-    }
-
-    .exit-modal {
-      width: 100%;
-      max-width: 340px;
-
-      background: #152b23;
-
-      border-radius: 22px;
-
-      padding: 24px 20px;
-
-      text-align: center;
-
-      box-shadow: 0 15px 50px rgba(0,0,0,0.5);
-    }
-
-    .modal-icon {
-      font-size: 42px;
-      margin-bottom: 12px;
-    }
-
-    .exit-modal h2 {
-      font-size: 19px;
-      margin-bottom: 8px;
-    }
-
-    .exit-modal p {
-      color: #9daf a8;
-      color: #9daea8;
-      font-size: 12px;
-      line-height: 1.8;
-      margin-bottom: 20px;
-    }
-
-    .modal-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .modal-button {
-      width: 100%;
-      padding: 13px;
-
-      border-radius: 14px;
-
-      border: 0;
-
-      color: white;
-
-      font-size: 14px;
-
-      cursor: pointer;
-    }
-
-    .leave-button {
-      background: #7b302d;
-    }
-
-    .stay-button {
-      background: #29483b;
-    }
-
-  </style>
-
+</style>
 </head>
-
 
 <body>
 
 
-  <!-- =================================
-       صفحه انتخاب نوع بازی
-  ================================== -->
+<!-- ================================================= -->
+<!-- صفحه انتخاب حالت -->
+<!-- ================================================= -->
 
-  <section id="modePage">
+<div id="modePage">
 
-    <div class="page">
+    <div class="modeTitleMain">
+        حکم
+    </div>
 
-      <div class="top">
-
-        <div class="crown">
-          👑
-        </div>
-
-        <h1>
-          بازی حکم
-        </h1>
-
-        <p class="subtitle">
-          نوع بازی خودت رو انتخاب کن
-        </p>
-
-      </div>
+    <div class="modeSubtitle">
+        حالت بازی را انتخاب کن
+    </div>
 
 
-      <div class="options">
+    <div class="mode" onclick="startSinglePlayer()">
 
-
-        <!-- تک نفره -->
-
-        <button
-          class="game-option"
-          onclick="singlePlayer()"
-        >
-
-          <div class="icon">
+        <div class="modeIcon">
             🤖
-          </div>
+        </div>
 
-          <div class="text">
+        <div class="modeText">
 
-            <span class="title">
-              بازی تک نفره با ربات‌ها
-            </span>
+            <div class="modeName">
+                بازی تک نفره با ربات‌ها
+            </div>
 
-            <span class="description">
-              بازی حکم با سه بازیکن ربات
-            </span>
+            <div class="modeDesc">
+                تو + یارت + دو ربات حریف
+            </div>
 
-          </div>
+        </div>
 
-          <div class="arrow">
-            ‹
-          </div>
-
-        </button>
+    </div>
 
 
-        <!-- عمومی -->
+    <div class="mode" onclick="publicGame()">
 
-        <button
-          class="game-option"
-          onclick="publicGame()"
-        >
-
-          <div class="icon">
+        <div class="modeIcon">
             🌐
-          </div>
+        </div>
 
-          <div class="text">
+        <div class="modeText">
 
-            <span class="title">
-              بازی عمومی
-            </span>
+            <div class="modeName">
+                بازی عمومی
+            </div>
 
-            <span class="description">
-              وارد یک میز عمومی شو و با بازیکنان دیگر بازی کن
-            </span>
+            <div class="modeDesc">
+                بازی آنلاین را بعداً اضافه می‌کنیم
+            </div>
 
-          </div>
+        </div>
 
-          <div class="arrow">
-            ‹
-          </div>
-
-        </button>
+    </div>
 
 
-        <!-- دوستان -->
+    <div class="mode" onclick="friendsGame()">
 
-        <button
-          class="game-option"
-          onclick="friendsGame()"
-        >
-
-          <div class="icon">
+        <div class="modeIcon">
             👥
-          </div>
+        </div>
 
-          <div class="text">
+        <div class="modeText">
 
-            <span class="title">
-              بازی با دوستان
-            </span>
+            <div class="modeName">
+                بازی با دوستان
+            </div>
 
-            <span class="description">
-              دوستانت را دعوت کن و یک میز خصوصی بساز
-            </span>
+            <div class="modeDesc">
+                دعوت دوستان را بعداً اضافه می‌کنیم
+            </div>
 
-          </div>
+        </div>
 
-          <div class="arrow">
-            ‹
-          </div>
+    </div>
 
+</div>
+
+
+<!-- ================================================= -->
+<!-- صفحه بازی -->
+<!-- ================================================= -->
+
+<div id="gamePage">
+
+
+    <!-- ================= نوار بالا ================= -->
+
+    <div class="topBar">
+
+
+        <!-- امتیازها -->
+
+        <div class="scores">
+
+
+            <!-- امتیاز اصلی راند -->
+
+            <div class="scoreColumn">
+
+                <span class="scoreTitle">
+                    راند
+                </span>
+
+                <div class="teamLabels">
+
+                    <span class="green">
+                        ما
+                    </span>
+
+                    <span class="red">
+                        حریف
+                    </span>
+
+                </div>
+
+                <div class="teamNumbers">
+
+                    <span
+                        id="roundOurScore"
+                        class="green"
+                    >
+                        0
+                    </span>
+
+                    <span
+                        id="roundEnemyScore"
+                        class="red"
+                    >
+                        0
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- امتیاز دست فعلی -->
+
+            <div class="scoreColumn">
+
+                <span class="scoreTitle">
+                    دست
+                </span>
+
+                <div class="teamLabels">
+
+                    <span class="green">
+                        ما
+                    </span>
+
+                    <span class="red">
+                        حریف
+                    </span>
+
+                </div>
+
+                <div class="teamNumbers">
+
+                    <span
+                        id="handOurScore"
+                        class="green"
+                    >
+                        0
+                    </span>
+
+                    <span
+                        id="handEnemyScore"
+                        class="red"
+                    >
+                        0
+                    </span>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- خروج -->
+
+        <button
+            class="exit"
+            onclick="showExit()"
+        >
+            خروج
         </button>
 
-
-      </div>
-
-
-      <button
-        class="back"
-        onclick="goBack()"
-      >
-        ← بازگشت
-      </button>
-
-    </div>
-
-  </section>
-
-
-
-  <!-- =================================
-       اتاق انتظار بازی عمومی
-  ================================== -->
-
-  <section id="publicRoom">
-
-
-    <header class="room-header">
-
-      <div class="room-title">
-        بازی عمومی
-      </div>
-
-      <button
-        class="exit-button"
-        onclick="openExitModal()"
-      >
-        ✕
-      </button>
-
-    </header>
-
-
-    <div class="room-info">
-
-      منتظر بازیکنان دیگر هستیم...
-
     </div>
 
 
-    <div class="table-area">
+    <!-- ================================================= -->
+    <!-- میز -->
+    <!-- ================================================= -->
+
+    <div class="table">
 
 
-      <!-- میز -->
+        <!-- یار من -->
 
-      <div class="table">
+        <div class="player playerTop">
 
-        <div class="table-text">
-          میز حکم
+            <div
+                class="avatar"
+                id="partnerAvatar"
+            >
+                🤖
+            </div>
+
+            <div class="playerName">
+                یار من
+            </div>
+
         </div>
 
-      </div>
 
+        <!-- حریف چپ -->
 
-      <!-- بازیکن بالا -->
+        <div class="player playerLeft">
 
-      <div
-        class="seat seat-top empty-seat"
-        onclick="invitePlayer('بالا')"
-      >
+            <div class="avatar">
+                🤖
+            </div>
 
-        <div class="avatar">
-          ＋
+            <div class="playerName">
+                ربات حریف
+            </div>
+
         </div>
 
-        <div class="player-name">
-          دعوت بازیکن
+
+        <!-- حریف راست -->
+
+        <div class="player playerRight">
+
+            <div class="avatar">
+                🤖
+            </div>
+
+            <div class="playerName">
+                ربات حریف
+            </div>
+
         </div>
 
-      </div>
 
+        <!-- خودم -->
 
-      <!-- بازیکن پایین / خود کاربر -->
+        <div class="player playerBottom">
 
-      <div
-        class="seat seat-bottom"
-      >
+            <div
+                class="avatar"
+                id="myAvatar"
+            >
+                👤
+            </div>
 
-        <div
-          class="avatar"
-          id="myAvatar"
-        >
-          👤
+            <div
+                class="playerName"
+                id="myName"
+            >
+                شما
+            </div>
+
         </div>
 
-        <div
-          class="player-name"
-          id="myName"
-        >
-          شما
+
+        <!-- وسط میز -->
+
+        <div class="center">
+
+            <div class="centerIcon">
+                🃏
+            </div>
+
+            <div class="centerText">
+                آماده شروع بازی
+                <br>
+                کارت‌ها در مرحله بعد اضافه می‌شوند
+            </div>
+
         </div>
-
-      </div>
-
-
-      <!-- بازیکن چپ -->
-
-      <div
-        class="seat seat-left empty-seat"
-        onclick="invitePlayer('چپ')"
-      >
-
-        <div class="avatar">
-          ＋
-        </div>
-
-        <div class="player-name">
-          دعوت بازیکن
-        </div>
-
-      </div>
-
-
-      <!-- بازیکن راست -->
-
-      <div
-        class="seat seat-right empty-seat"
-        onclick="invitePlayer('راست')"
-      >
-
-        <div class="avatar">
-          ＋
-        </div>
-
-        <div class="player-name">
-          دعوت بازیکن
-        </div>
-
-      </div>
-
-
-      <!-- شمارش معکوس -->
-
-      <div
-        id="countdown"
-        class="countdown"
-        style="display:none;"
-      >
-
-        <div
-          id="countdownNumber"
-          class="countdown-number"
-        >
-          30
-        </div>
-
-        <div class="countdown-text">
-          ثانیه
-        </div>
-
-      </div>
 
 
     </div>
 
 
-    <div class="invite-hint">
-
-      برای جای خالی روی علامت ＋ بزن
-
+    <div class="status">
+        بازی تک‌نفره با ربات‌ها
     </div>
 
-
-  </section>
-
+</div>
 
 
-  <!-- =================================
-       پنجره خروج
-  ================================== -->
+<!-- ================================================= -->
+<!-- پنجره خروج -->
+<!-- ================================================= -->
 
-  <div
+<div
+    class="modal"
     id="exitModal"
-    class="modal-overlay"
-  >
+>
 
-    <div class="exit-modal">
+    <div class="modalBox">
 
-      <div class="modal-icon">
-        🚪
-      </div>
+        <div class="modalTitle">
+            می‌خواهی از بازی خارج شوی؟
+        </div>
 
-      <h2>
-        می‌خواهی از بازی خارج شوی؟
-      </h2>
-
-      <p>
-        اگر خارج شوی از اتاق انتظار خارج می‌شوی.
-      </p>
-
-
-      <div class="modal-buttons">
 
         <button
-          class="modal-button leave-button"
-          onclick="leaveGame()"
+            class="modalButton leave"
+            onclick="leaveGame()"
         >
-          خروج از بازی
+            خروج از بازی
         </button>
+
 
         <button
-          class="modal-button stay-button"
-          onclick="closeExitModal()"
+            class="modalButton stay"
+            onclick="closeExit()"
         >
-          نه، توی بازی می‌مونم
+            نه، توی بازی می‌مونم
         </button>
-
-      </div>
 
     </div>
 
-  </div>
+</div>
 
 
+<script>
 
-  <script>
+/* ================================================= */
+/* Telegram */
+/* ================================================= */
+
+const tg = window.Telegram?.WebApp;
+
+if(tg){
+    tg.ready();
+    tg.expand();
+}
 
 
-    /* =========================
-       Telegram
-    ========================= */
+/* ================================================= */
+/* شروع بازی تک نفره */
+/* ================================================= */
 
-    const tg = window.Telegram?.WebApp;
+function startSinglePlayer(){
 
-    if (tg) {
-      tg.ready();
-      tg.expand();
+    document.getElementById("modePage").style.display = "none";
+
+    document.getElementById("gamePage").style.display = "block";
+
+    loadTelegramUser();
+
+}
+
+
+/* ================================================= */
+/* اطلاعات کاربر تلگرام */
+/* ================================================= */
+
+function loadTelegramUser(){
+
+    const user = tg?.initDataUnsafe?.user;
+
+    if(!user){
+        return;
     }
 
+    let name = user.first_name || "شما";
 
-    /* =========================
-       اطلاعات کاربر
-    ========================= */
-
-    let currentUser = {
-      name: "شما",
-      photo: ""
-    };
-
-
-    function loadUser() {
-
-      const user = tg?.initDataUnsafe?.user;
-
-      if (!user) {
-        return;
-      }
-
-
-      let name = "";
-
-      if (user.first_name) {
-        name += user.first_name;
-      }
-
-      if (user.last_name) {
+    if(user.last_name){
         name += " " + user.last_name;
-      }
+    }
 
-      if (!name) {
-        name = "شما";
-      }
+    document.getElementById("myName").textContent = name;
 
 
-      currentUser.name = name;
-
-
-      if (user.photo_url) {
-        currentUser.photo = user.photo_url;
-      }
-
-
-      document.getElementById("myName").textContent =
-        currentUser.name;
-
-
-      if (currentUser.photo) {
+    if(user.photo_url){
 
         const avatar =
-          document.getElementById("myAvatar");
+            document.getElementById("myAvatar");
 
-        avatar.innerHTML = "";
+        avatar.style.backgroundImage =
+            "url('" + user.photo_url + "')";
 
-        const img =
-          document.createElement("img");
-
-        img.src = currentUser.photo;
-
-        img.alt = "profile";
-
-        avatar.appendChild(img);
-
-      }
+        avatar.textContent = "";
 
     }
 
+}
 
-    loadUser();
 
+/* ================================================= */
+/* بازی عمومی */
+/* ================================================= */
 
+function publicGame(){
 
-    /* =========================
-       رفتن به صفحه عمومی
-    ========================= */
+    alert(
+        "بازی عمومی و آنلاین را فعلاً بعداً اضافه می‌کنیم ❤️"
+    );
 
-    let countdownTimer = null;
+}
 
-    let secondsLeft = 30;
 
+/* ================================================= */
+/* بازی با دوستان */
+/* ================================================= */
 
-    function publicGame() {
+function friendsGame(){
 
-      document.getElementById("modePage").style.display =
-        "none";
+    alert(
+        "بازی با دوستان را فعلاً بعداً آنلاین می‌کنیم ❤️"
+    );
 
-      document.getElementById("publicRoom").style.display =
-        "block";
+}
 
 
-      startPublicCountdown();
+/* ================================================= */
+/* خروج */
+/* ================================================= */
 
-    }
+function showExit(){
 
+    document.getElementById("exitModal").style.display = "flex";
 
+}
 
-    /* =========================
-       شمارش ۳۰ ثانیه
-    ========================= */
 
-    function startPublicCountdown() {
+function closeExit(){
 
-      secondsLeft = 30;
+    document.getElementById("exitModal").style.display = "none";
 
+}
 
-      const countdown =
-        document.getElementById("countdown");
 
-      const number =
-        document.getElementById("countdownNumber");
+function leaveGame(){
 
+    document.getElementById("exitModal").style.display = "none";
 
-      countdown.style.display = "flex";
+    document.getElementById("gamePage").style.display = "none";
 
-      number.textContent = secondsLeft;
+    document.getElementById("modePage").style.display = "block";
 
+}
 
-      clearInterval(countdownTimer);
-
-
-      countdownTimer = setInterval(function() {
-
-        secondsLeft--;
-
-        number.textContent = secondsLeft;
-
-
-        if (secondsLeft <= 0) {
-
-          clearInterval(countdownTimer);
-
-          fillEmptySeatsWithBots();
-
-        }
-
-      }, 1000);
-
-    }
-
-
-
-    /* =========================
-       پر کردن جای خالی با ربات
-    ========================= */
-
-    function fillEmptySeatsWithBots() {
-
-      alert(
-        "زمان انتظار تمام شد؛ جای خالی با ربات پر می‌شود."
-      );
-
-    }
-
-
-
-    /* =========================
-       دعوت بازیکن
-    ========================= */
-
-    function invitePlayer(position) {
-
-      alert(
-        "انتخاب دوست آنلاین برای جایگاه " +
-        position +
-        " در مرحله بعد اضافه می‌شود."
-      );
-
-    }
-
-
-
-    /* =========================
-       خروج
-    ========================= */
-
-    function openExitModal() {
-
-      document
-        .getElementById("exitModal")
-        .classList.add("show");
-
-    }
-
-
-    function closeExitModal() {
-
-      document
-        .getElementById("exitModal")
-        .classList.remove("show");
-
-    }
-
-
-    function leaveGame() {
-
-      clearInterval(countdownTimer);
-
-      closeExitModal();
-
-
-      document.getElementById("publicRoom").style.display =
-        "none";
-
-      document.getElementById("modePage").style.display =
-        "flex";
-
-    }
-
-
-
-    /* =========================
-       تک نفره
-    ========================= */
-
-    function singlePlayer() {
-
-      alert(
-        "بخش بازی تک نفره با ربات‌ها در مرحله بعد ساخته می‌شود."
-      );
-
-    }
-
-
-
-    /* =========================
-       دوستان
-    ========================= */
-
-    function friendsGame() {
-
-      alert(
-        "بخش بازی با دوستان در مرحله بعد ساخته می‌شود."
-      );
-
-    }
-
-
-
-    /* =========================
-       بازگشت
-    ========================= */
-
-    function goBack() {
-
-      if (window.history.length > 1) {
-
-        window.history.back();
-
-      } else {
-
-        window.location.href = "index.html";
-
-      }
-
-    }
-
-  </script>
+</script>
 
 </body>
   </html>
