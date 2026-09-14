@@ -1302,11 +1302,19 @@ function showHakim(playerId){
 
   document.getElementById("centerText").textContent = "";
 
+  if(playerId === "bottom"){
+
   document.getElementById("statusText").textContent =
-    "👑 " + player.name +
-    " حاکم است؛ ۵ کارت خود را ببینید";
+    "👑 شما حاکم هستید؛ ۵ کارت خود را ببینید";
 
   showHakimHand(playerId);
+
+}else{
+
+  document.getElementById("statusText").textContent =
+    "👑 " + player.name + " حاکم شد";
+
+    }
 
     }
 
@@ -1336,7 +1344,10 @@ function showHakimHand(playerId){
 
   const cards =
     playerCards[playerId];
-
+    
+if(playerId !== "bottom"){
+  return;
+    }
   cards.forEach(function(cardData, index){
 
     const card =
@@ -1461,6 +1472,44 @@ function chooseTrump(playerId, suit){
     "👑 حکم انتخاب شد: " + suit;
 
       }
+function botChooseTrump(playerId){
+
+  if(playerId !== hakim){
+    return;
+  }
+
+  const cards = playerCards[playerId];
+
+  if(!cards || cards.length === 0){
+    return;
+  }
+
+  const suits = ["♠","♥","♦","♣"];
+
+  const counts = {
+    "♠": 0,
+    "♥": 0,
+    "♦": 0,
+    "♣": 0
+  };
+
+  cards.forEach(function(card){
+    counts[card.suit]++;
+  });
+
+  let bestSuit = suits[0];
+
+  suits.forEach(function(suit){
+
+    if(counts[suit] > counts[bestSuit]){
+      bestSuit = suit;
+    }
+
+  });
+
+  chooseTrump(playerId, bestSuit);
+
+    }
     
 function hideAllHakim(){
 
