@@ -1,1 +1,886 @@
-<!DOCTYPE html> <html lang="fa" dir="rtl"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> <title>Bi Hava Games</title> <script src="https://telegram.org/js/telegram-web-app.js"></script> <style> * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; } body { margin: 0; background: #07150f; color: #fff; font-family: Tahoma, Arial, sans-serif; min-height: 100vh; } .app { min-height: 100vh; display: flex; flex-direction: column; } /* ---------- HEADER ---------- */ .header { height: 82px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; background: #0b1d15; border-bottom: 1px solid rgba(210,170,55,.25); } .profileBox { display: flex; align-items: center; gap: 10px; cursor: pointer; } .profileAvatar { width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(145deg, #26352e, #101a16); border: 2px solid #d5aa38; display: flex; align-items: center; justify-content: center; font-size: 25px; overflow: hidden; } .profileAvatar img { width: 100%; height: 100%; object-fit: cover; } .profileText { text-align: right; } .profileText small { color: #a8b5ae; font-size: 11px; } .profileText strong { display: block; color: #f0d36d; font-size: 14px; margin-top: 3px; } .menuBtn { width: 48px; height: 48px; border: 1px solid #6e5720; border-radius: 14px; background: #111f18; color: #f0d36d; font-size: 25px; cursor: pointer; } /* ---------- MAIN ---------- */ main { flex: 1; padding: 20px 15px 100px; overflow-y: auto; } .page { display: none; } .page.active { display: block; } .title { text-align: center; margin: 8px 0 22px; } .title h1 { margin: 0; color: #f0d36d; font-size: 27px; } .title p { margin: 7px 0 0; color: #93a49c; font-size: 13px; } /* ---------- GAME CARDS ---------- */ .gamesGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; } .gameCard { min-height: 150px; border: 1px solid #755c1e; border-radius: 20px; background: linear-gradient(145deg, #123625, #091e14); padding: 18px 12px; text-align: center; position: relative; cursor: pointer; transition: .15s; box-shadow: 0 7px 20px rgba(0,0,0,.22); } .gameCard:active { transform: scale(.97); } .gameCard.activeGame { border: 2px solid #d6ad42; box-shadow: 0 0 18px rgba(214,173,66,.16); } .gameIcon { width: 58px; height: 58px; margin: 0 auto 10px; border-radius: 17px; display: flex; align-items: center; justify-content: center; background: #0c2418; border: 1px solid #806523; font-size: 32px; } .gameCard h3 { margin: 4px 0; font-size: 16px; color: #fff; } .gameCard p { margin: 5px 0 0; font-size: 11px; color: #93a49c; } .lock { position: absolute; top: 10px; left: 10px; font-size: 17px; } /* ---------- GENERAL BOX ---------- */ .infoBox { background: #10271b; border: 1px solid #5f4c1d; border-radius: 18px; padding: 18px; margin-bottom: 14px; } .infoBox h2 { color: #f0d36d; margin-top: 0; font-size: 19px; } .infoBox p { color: #bdc8c2; line-height: 1.9; font-size: 13px; } .actionBtn { width: 100%; padding: 14px; border: 0; border-radius: 14px; background: linear-gradient(135deg, #d9b34e, #9d7920); color: #10150f; font-weight: bold; font-size: 15px; cursor: pointer; } /* ---------- BOTTOM NAV ---------- */ .bottomNav { position: fixed; bottom: 0; right: 0; left: 0; height: 78px; background: rgba(8,22,15,.97); border-top: 1px solid #5e4b1b; display: grid; grid-template-columns: repeat(5, 1fr); z-index: 100; } .navItem { border: 0; background: transparent; color: #77857e; font-size: 10px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; } .navIcon { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 19px; } .navItem.active { color: #f0d36d; } .navItem.active .navIcon { background: #26351e; border: 1px solid #806523; } /* ---------- SIDE MENU ---------- */ .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.65); z-index: 200; } .overlay.show { display: block; } .sideMenu { position: fixed; top: 0; right: -290px; width: 275px; height: 100%; background: #0c1f15; border-left: 1px solid #806523; z-index: 201; padding: 25px 18px; transition: right .25s ease; } .sideMenu.show { right: 0; } .menuTitle { color: #f0d36d; font-size: 21px; font-weight: bold; margin-bottom: 25px; } .closeMenu { position: absolute; left: 15px; top: 18px; background: transparent; border: 0; color: #fff; font-size: 25px; } .menuItem { width: 100%; border: 0; background: #12291c; color: #fff; padding: 15px; margin-bottom: 10px; border-radius: 13px; text-align: right; font-size: 14px; cursor: pointer; } .menuItem span { margin-left: 9px; } /* ---------- TELEGRAM ---------- */ .telegramBtn { margin-top: 20px; background: #102d43; border: 1px solid #2e6485; color: #8ed4ff; } @media (max-width: 360px) { .gamesGrid { gap: 9px; } .gameCard { min-height: 140px; padding: 14px 8px; } } </style> </head> <body> <div class="app"> <!-- HEADER --> <header class="header"> <div class="profileBox" onclick="openPage('profile')"> <div class="profileAvatar" id="profileAvatar">👤</div> <div class="profileText"> <small>پروفایل</small> <strong id="username">بازیکن</strong> </div> </div> <button class="menuBtn" onclick="openMenu()">☰</button> </header> <!-- MAIN --> <main> <!-- بازی‌ها --> <section id="games" class="page active"> <div class="title"> <h1>🎮 Bi Hava Games</h1> <p>بازی مورد علاقه‌ات را انتخاب کن</p> </div> <div class="gamesGrid"> <div class="gameCard activeGame" onclick="openHokm()"> <div class="gameIcon">🃏</div> <h3>حکم</h3> <p>بازی حکم آنلاین</p> </div> <div class="gameCard"> <span class="lock">🔒</span> <div class="gameIcon">♥️</div> <h3>بی‌دل</h3> <p>به‌زودی</p> </div> <div class="gameCard"> <span class="lock">🔒</span> <div class="gameIcon">⭕</div> <h3>دوز</h3> <p>به‌زودی</p> </div> <div class="gameCard"> <span class="lock">🔒</span> <div class="gameIcon">♠️</div> <h3>پاسور</h3> <p>به‌زودی</p> </div> <div class="gameCard"> <span class="lock">🔒</span> <div class="gameIcon">♦️</div> <h3>بازی جدید</h3> <p>به‌زودی</p> </div> <div class="gameCard"> <span class="lock">🔒</span> <div class="gameIcon">🎲</div> <h3>بازی بیشتر</h3> <p>به‌زودی</p> </div> </div> </section> <!-- گفتگو --> <section id="chat" class="page"> <div class="title"> <h1>💬 گفتگو</h1> <p>محیط گفتگوی بازیکنان</p> </div> <div class="infoBox"> <h2>گفتگو</h2> <p> این قسمت برای گفتگوی بازیکنان ساخته می‌شود. بعداً چت، اتاق گفتگو و امکانات بیشتر را اضافه می‌کنیم. </p> </div> </section> <!-- دوستان --> <section id="friends" class="page"> <div class="title"> <h1>👥 دوستان</h1> <p>دوستان و بازیکنان مورد علاقه</p> </div> <div class="infoBox"> <h2>دوستان من</h2> <p> اینجا لیست دوستان، درخواست دوستی و دعوت به بازی قرار می‌گیرد. </p> </div> </section> <!-- برترین‌ها --> <section id="top" class="page"> <div class="title"> <h1>🏆 برترین‌ها</h1> <p>جدول امتیازات بازیکنان</p> </div> <div class="infoBox"> <h2>برترین بازیکنان</h2> <p> جدول رتبه‌بندی و امتیازات بازیکنان در این بخش قرار می‌گیرد. </p> </div> </section> <!-- پروفایل --> <section id="profile" class="page"> <div class="title"> <h1>👤 پروفایل</h1> <p>اطلاعات حساب شما</p> </div> <div class="infoBox"> <h2 id="profileName">بازیکن</h2> <p id="profileUsername">@player</p> <button class="actionBtn"> ویرایش پروفایل </button> </div> <button class="actionBtn telegramBtn" onclick="goToTelegram()"> ↗️ بازگشت به تلگرام </button> </section> </main> <!-- BOTTOM NAV --> <nav class="bottomNav"> <button class="navItem active" onclick="openPage('games', this)"> <div class="navIcon">🎮</div> <span>بازی‌ها</span> </button> <button class="navItem" onclick="openPage('chat', this)"> <div class="navIcon">💬</div> <span>گفتگو</span> </button> <button class="navItem" onclick="openPage('friends', this)"> <div class="navIcon">👥</div> <span>دوستان</span> </button> <button class="navItem" onclick="openPage('top', this)"> <div class="navIcon">🏆</div> <span>برترین‌ها</span> </button> <button class="navItem" onclick="openPage('profile', this)"> <div class="navIcon">👤</div> <span>پروفایل</span> </button> </nav> </div> <!-- SIDE MENU --> <div class="overlay" id="overlay" onclick="closeMenu()"></div> <div class="sideMenu" id="sideMenu"> <button class="closeMenu" onclick="closeMenu()">×</button> <div class="menuTitle">Bi Hava Games</div> <button class="menuItem" onclick="showInfo('راهنما')"> <span>📖</span> راهنما </button> <button class="menuItem" onclick="showInfo('تنظیمات')"> <span>⚙️</span> تنظیمات </button> <button class="menuItem" onclick="showInfo('قوانین بازی')"> <span>📜</span> قوانین بازی </button> <button class="menuItem" onclick="showInfo('پشتیبانی')"> <span>🛟</span> پشتیبانی </button> <button class="menuItem telegramBtn" onclick="goToTelegram()"> <span>↗️</span> ورود به تلگرام </button> </div> <script> let tg = null; if (window.Telegram && window.Telegram.WebApp) { tg = window.Telegram.WebApp; tg.ready(); tg.expand(); if (tg.initDataUnsafe && tg.initDataUnsafe.user) { const user = tg.initDataUnsafe.user; const name = user.first_name || user.username || "بازیکن"; const username = user.username ? "@" + user.username : "بدون نام کاربری"; document.getElementById("username").textContent = name; document.getElementById("profileName").textContent = name; document.getElementById("profileUsername").textContent = username; if (user.photo_url) { document.getElementById("profileAvatar").innerHTML = '<img src="' + user.photo_url + '" alt="profile">'; } } } /* ---------- PAGE NAVIGATION ---------- */ function openPage(pageName, clickedButton) { document.querySelectorAll(".page").forEach(function(page) { page.classList.remove("active"); }); const target = document.getElementById(pageName); if (target) { target.classList.add("active"); } document.querySelectorAll(".navItem").forEach(function(item) { item.classList.remove("active"); }); if (clickedButton) { clickedButton.classList.add("active"); } else { document.querySelectorAll(".navItem").forEach(function(item) { if ( item.innerText.includes("بازی‌ها") && pageName === "games" ) { item.classList.add("active"); } if ( item.innerText.includes("پروفایل") && pageName === "profile" ) { item.classList.add("active"); } }); } window.scrollTo(0, 0); } /* ---------- HOKM ---------- */ function openHokm() { window.location.href = "hokm.html"; } /* ---------- SIDE MENU ---------- */ function openMenu() { document.getElementById("sideMenu").classList.add("show"); document.getElementById("overlay").classList.add("show"); } function closeMenu() { document.getElementById("sideMenu").classList.remove("show"); document.getElementById("overlay").classList.remove("show"); } /* ---------- MENU INFORMATION ---------- */ function showInfo(title) { closeMenu(); setTimeout(function() { alert( title + "\n\nاین بخش در مرحله بعدی کامل می‌شود ❤️" ); }, 200); } /* ---------- TELEGRAM ---------- */ function goToTelegram() { if (tg) { tg.close(); } else { alert( "این دکمه وقتی بازی از داخل تلگرام باز شود، شما را به تلگرام برمی‌گرداند." ); } } </script> </body> </html> 
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Bi Hava Games</title>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Tahoma, Arial, sans-serif;
+      background: #0b1713;
+      color: white;
+      min-height: 100vh;
+    }
+
+    button {
+      font-family: inherit;
+    }
+
+    .app {
+      min-height: 100vh;
+      padding-bottom: 75px;
+    }
+
+    /* HEADER */
+
+    .header {
+      height: 70px;
+      padding: 10px 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #12251e;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .profile-mini {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .profile-mini img,
+    .profile-mini .avatar {
+      width: 43px;
+      height: 43px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #294238;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 21px;
+    }
+
+    .profile-info {
+      text-align: right;
+    }
+
+    .profile-name {
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .profile-username {
+      color: #8fa69d;
+      font-size: 11px;
+      margin-top: 4px;
+    }
+
+    .menu-btn {
+      width: 44px;
+      height: 44px;
+      border: 0;
+      border-radius: 13px;
+      background: rgba(255,255,255,0.08);
+      color: white;
+      font-size: 25px;
+      cursor: pointer;
+    }
+
+    /* MAIN */
+
+    .content {
+      padding: 22px 15px;
+    }
+
+    .welcome {
+      margin-bottom: 22px;
+    }
+
+    .welcome h1 {
+      font-size: 25px;
+      margin-bottom: 7px;
+    }
+
+    .welcome p {
+      color: #9fb0a9;
+      font-size: 13px;
+    }
+
+    .section-title {
+      font-size: 17px;
+      margin-bottom: 14px;
+    }
+
+    /* GAMES */
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 13px;
+    }
+
+    .game-card {
+      min-height: 145px;
+      border: 0;
+      border-radius: 20px;
+      background: #152b23;
+      color: white;
+      padding: 16px;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      border: 1px solid rgba(255,255,255,0.06);
+      transition: 0.2s;
+    }
+
+    .game-card:active {
+      transform: scale(0.96);
+    }
+
+    .game-icon {
+      font-size: 42px;
+      margin: 8px 0 12px;
+    }
+
+    .game-name {
+      font-size: 17px;
+      font-weight: bold;
+    }
+
+    .game-status {
+      margin-top: 8px;
+      font-size: 10px;
+      color: #8da39a;
+    }
+
+    .locked {
+      opacity: 0.58;
+      cursor: default;
+    }
+
+    .soon {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: #263c34;
+      color: #aabcb5;
+      border-radius: 10px;
+      padding: 4px 7px;
+      font-size: 9px;
+    }
+
+    /* BOTTOM NAV */
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      height: 68px;
+      background: #10221b;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      z-index: 20;
+    }
+
+    .nav-item {
+      border: 0;
+      background: transparent;
+      color: #81968e;
+      font-size: 10px;
+      cursor: pointer;
+      padding-top: 8px;
+    }
+
+    .nav-icon {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 5px;
+    }
+
+    .nav-item.active {
+      color: #ffffff;
+    }
+
+    /* SIDE MENU */
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 50;
+      display: none;
+    }
+
+    .overlay.show {
+      display: block;
+    }
+
+    .side-menu {
+      position: fixed;
+      top: 0;
+      right: -310px;
+      width: 290px;
+      max-width: 85%;
+      height: 100vh;
+      background: #11241d;
+      z-index: 60;
+      padding: 20px;
+      transition: right 0.25s ease;
+      box-shadow: -8px 0 30px rgba(0,0,0,0.35);
+    }
+
+    .side-menu.open {
+      right: 0;
+    }
+
+    .menu-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 12px;
+    }
+
+    .menu-header h2 {
+      font-size: 20px;
+    }
+
+    .close-menu {
+      width: 38px;
+      height: 38px;
+      border: 0;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.08);
+      color: white;
+      font-size: 20px;
+    }
+
+    .menu-item {
+      width: 100%;
+      padding: 15px 10px;
+      border: 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      background: transparent;
+      color: white;
+      text-align: right;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .menu-item span {
+      margin-left: 10px;
+    }
+
+    /* PROFILE PAGE */
+
+    .profile-page {
+      display: none;
+      padding: 25px 15px;
+      text-align: center;
+    }
+
+    .profile-big {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #294238;
+      margin: 10px auto 15px;
+    }
+
+    .profile-page h2 {
+      margin-bottom: 7px;
+    }
+
+    .profile-page p {
+      color: #8fa39b;
+      font-size: 13px;
+    }
+
+    .profile-box {
+      margin-top: 25px;
+      background: #152b23;
+      border-radius: 18px;
+      padding: 18px;
+      text-align: right;
+    }
+
+    .profile-row {
+      padding: 13px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-size: 13px;
+    }
+
+    .profile-row:last-child {
+      border-bottom: 0;
+    }
+
+    /* SIMPLE PAGES */
+
+    .simple-page {
+      display: none;
+      padding: 30px 18px;
+      text-align: center;
+    }
+
+    .simple-page .big-icon {
+      font-size: 55px;
+      margin-bottom: 15px;
+    }
+
+    .simple-page h2 {
+      margin-bottom: 10px;
+    }
+
+    .simple-page p {
+      color: #9daf a8;
+      color: #9daea8;
+      font-size: 13px;
+      line-height: 2;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app">
+
+    <!-- HEADER -->
+    <header class="header">
+
+      <!-- PROFILE -->
+      <div class="profile-mini" onclick="showPage('profile')">
+
+        <div id="headerAvatar" class="avatar">👤</div>
+
+        <div class="profile-info">
+          <div id="headerName" class="profile-name">
+            بازیکن
+          </div>
+
+          <div id="headerUsername" class="profile-username">
+            @username
+          </div>
+        </div>
+
+      </div>
+
+      <!-- MENU -->
+      <button class="menu-btn" onclick="openMenu()">☰</button>
+
+    </header>
+
+
+    <!-- HOME -->
+    <main id="homePage" class="content">
+
+      <div class="welcome">
+        <h1>🎮 Bi Hava Games</h1>
+        <p>بازی کن، دوست پیدا کن و لذت ببر</p>
+      </div>
+
+      <div class="section-title">
+        بازی‌ها
+      </div>
+
+
+      <div class="games-grid">
+
+        <!-- HOKM -->
+        <button class="game-card" onclick="openHokm()">
+
+          <div class="game-icon">👑</div>
+
+          <div class="game-name">
+            حکم
+          </div>
+
+          <div class="game-status">
+            بازی کنید
+          </div>
+
+        </button>
+
+
+        <!-- BI DEL -->
+        <button class="game-card locked">
+
+          <div class="soon">
+            به‌زودی
+          </div>
+
+          <div class="game-icon">
+            ❤️
+          </div>
+
+          <div class="game-name">
+            بی‌دل
+          </div>
+
+          <div class="game-status">
+            در حال ساخت
+          </div>
+
+        </button>
+
+
+        <!-- PASOOR -->
+        <button class="game-card locked">
+
+          <div class="soon">
+            به‌زودی
+          </div>
+
+          <div class="game-icon">
+            🃏
+          </div>
+
+          <div class="game-name">
+            پاسور
+          </div>
+
+          <div class="game-status">
+            در حال ساخت
+          </div>
+
+        </button>
+
+
+        <!-- DOUZ -->
+        <button class="game-card locked">
+
+          <div class="soon">
+            به‌زودی
+          </div>
+
+          <div class="game-icon">
+            🎴
+          </div>
+
+          <div class="game-name">
+            دوز
+          </div>
+
+          <div class="game-status">
+            در حال ساخت
+          </div>
+
+        </button>
+
+
+        <!-- LUDO -->
+        <button class="game-card" onclick="openLudo()">
+
+          <div class="game-icon">
+            🎲
+          </div>
+
+          <div class="game-name">
+            منچ
+          </div>
+
+          <div class="game-status">
+            بازی کنید
+          </div>
+
+        </button>
+
+
+        <!-- MORE -->
+        <button class="game-card locked">
+
+          <div class="soon">
+            به‌زودی
+          </div>
+
+          <div class="game-icon">
+            🎮
+          </div>
+
+          <div class="game-name">
+            بازی‌های بیشتر
+          </div>
+
+          <div class="game-status">
+            به‌زودی
+          </div>
+
+        </button>
+
+      </div>
+
+    </main>
+
+
+    <!-- PROFILE -->
+    <section id="profilePage" class="profile-page">
+
+      <div id="profileAvatar" class="profile-big">
+        👤
+      </div>
+
+      <h2 id="profileName">
+        بازیکن
+      </h2>
+
+      <p id="profileUsername">
+        @username
+      </p>
+
+      <div class="profile-box">
+
+        <div class="profile-row">
+          🎮 بازی‌های انجام‌شده: ۰
+        </div>
+
+        <div class="profile-row">
+          🏆 بردها: ۰
+        </div>
+
+        <div class="profile-row">
+          ⭐ امتیاز: ۰
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- CHAT -->
+    <section id="chatPage" class="simple-page">
+
+      <div class="big-icon">💬</div>
+
+      <h2>گفت‌وگو</h2>
+
+      <p>
+        بخش گفت‌وگو به‌زودی فعال می‌شود.
+      </p>
+
+    </section>
+
+
+    <!-- FRIENDS -->
+    <section id="friendsPage" class="simple-page">
+
+      <div class="big-icon">👥</div>
+
+      <h2>دوستان</h2>
+
+      <p>
+        دوستان آنلاین و دعوت به بازی در این بخش قرار می‌گیرند.
+      </p>
+
+    </section>
+
+
+    <!-- LEADERBOARD -->
+    <section id="leaderPage" class="simple-page">
+
+      <div class="big-icon">🏆</div>
+
+      <h2>برترین‌ها</h2>
+
+      <p>
+        جدول برترین بازیکنان به‌زودی فعال می‌شود.
+      </p>
+
+    </section>
+
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav">
+
+      <button class="nav-item active" onclick="showPage('home')">
+        <span class="nav-icon">🎮</span>
+        بازی‌ها
+      </button>
+
+      <button class="nav-item" onclick="showPage('chat')">
+        <span class="nav-icon">💬</span>
+        گفت‌وگو
+      </button>
+
+      <button class="nav-item" onclick="showPage('friends')">
+        <span class="nav-icon">👥</span>
+        دوستان
+      </button>
+
+      <button class="nav-item" onclick="showPage('leader')">
+        <span class="nav-icon">🏆</span>
+        برترین‌ها
+      </button>
+
+      <button class="nav-item" onclick="showPage('profile')">
+        <span class="nav-icon">👤</span>
+        پروفایل
+      </button>
+
+    </nav>
+
+  </div>
+
+
+  <!-- OVERLAY -->
+  <div id="overlay" class="overlay" onclick="closeMenu()"></div>
+
+
+  <!-- SIDE MENU -->
+  <aside id="sideMenu" class="side-menu">
+
+    <div class="menu-header">
+
+      <h2>منو</h2>
+
+      <button class="close-menu" onclick="closeMenu()">
+        ✕
+      </button>
+
+    </div>
+
+
+    <button class="menu-item" onclick="showHelp()">
+      <span>📖</span>
+      راهنما
+    </button>
+
+    <button class="menu-item" onclick="showSettings()">
+      <span>⚙️</span>
+      تنظیمات
+    </button>
+
+    <button class="menu-item" onclick="showRules()">
+      <span>📜</span>
+      قوانین بازی
+    </button>
+
+    <button class="menu-item" onclick="showSupport()">
+      <span>🎧</span>
+      پشتیبانی
+    </button>
+
+    <button class="menu-item" onclick="goToTelegram()">
+      <span>✈️</span>
+      ورود به تلگرام
+    </button>
+
+  </aside>
+
+
+  <script>
+
+    /* TELEGRAM */
+
+    const tg = window.Telegram?.WebApp;
+
+    if (tg) {
+      tg.ready();
+      tg.expand();
+    }
+
+
+    /* USER */
+
+    function loadTelegramUser() {
+
+      const user = tg?.initDataUnsafe?.user;
+
+      if (!user) {
+        return;
+      }
+
+      let name = "";
+
+      if (user.first_name) {
+        name += user.first_name;
+      }
+
+      if (user.last_name) {
+        name += " " + user.last_name;
+      }
+
+      if (!name) {
+        name = "بازیکن";
+      }
+
+      const username = user.username
+        ? "@" + user.username
+        : "بدون نام کاربری";
+
+
+      document.getElementById("headerName").textContent = name;
+      document.getElementById("headerUsername").textContent = username;
+
+      document.getElementById("profileName").textContent = name;
+      document.getElementById("profileUsername").textContent = username;
+
+
+      if (user.photo_url) {
+
+        const headerAvatar = document.getElementById("headerAvatar");
+
+        headerAvatar.innerHTML = "";
+
+        const img = document.createElement("img");
+
+        img.src = user.photo_url;
+        img.alt = "profile";
+
+        headerAvatar.appendChild(img);
+
+
+        const profileAvatar = document.getElementById("profileAvatar");
+
+        profileAvatar.innerHTML = "";
+
+        const img2 = document.createElement("img");
+
+        img2.src = user.photo_url;
+        img2.alt = "profile";
+
+        img2.style.width = "100%";
+        img2.style.height = "100%";
+        img2.style.borderRadius = "50%";
+        img2.style.objectFit = "cover";
+
+        profileAvatar.appendChild(img2);
+
+      }
+
+    }
+
+
+    loadTelegramUser();
+
+
+    /* HOKM */
+
+    function openHokm() {
+
+      window.location.href = "hokm.html";
+
+    }
+
+
+    /* LUDO */
+
+    function openLudo() {
+
+      alert("بازی منچ به‌زودی از همین قسمت باز می‌شود.");
+
+    }
+
+
+    /* PAGE SYSTEM */
+
+    function hideAllPages() {
+
+      document.getElementById("homePage").style.display = "none";
+      document.getElementById("profilePage").style.display = "none";
+      document.getElementById("chatPage").style.display = "none";
+      document.getElementById("friendsPage").style.display = "none";
+      document.getElementById("leaderPage").style.display = "none";
+
+    }
+
+
+    function showPage(page) {
+
+      hideAllPages();
+
+      if (page === "home") {
+        document.getElementById("homePage").style.display = "block";
+      }
+
+      if (page === "profile") {
+        document.getElementById("profilePage").style.display = "block";
+      }
+
+      if (page === "chat") {
+        document.getElementById("chatPage").style.display = "block";
+      }
+
+      if (page === "friends") {
+        document.getElementById("friendsPage").style.display = "block";
+      }
+
+      if (page === "leader") {
+        document.getElementById("leaderPage").style.display = "block";
+      }
+
+    }
+
+
+    /* MENU */
+
+    function openMenu() {
+
+      document.getElementById("sideMenu").classList.add("open");
+      document.getElementById("overlay").classList.add("show");
+
+    }
+
+
+    function closeMenu() {
+
+      document.getElementById("sideMenu").classList.remove("open");
+      document.getElementById("overlay").classList.remove("show");
+
+    }
+
+
+    /* MENU ITEMS */
+
+    function showHelp() {
+
+      closeMenu();
+
+      alert("راهنمای Bi Hava Games به‌زودی کامل می‌شود.");
+
+    }
+
+
+    function showSettings() {
+
+      closeMenu();
+
+      alert("تنظیمات به‌زودی فعال می‌شود.");
+
+    }
+
+
+    function showRules() {
+
+      closeMenu();
+
+      alert("قوانین بازی‌ها به‌زودی اضافه می‌شود.");
+
+    }
+
+
+    function showSupport() {
+
+      closeMenu();
+
+      alert("بخش پشتیبانی به‌زودی فعال می‌شود.");
+
+    }
+
+
+    function goToTelegram() {
+
+      if (tg) {
+        tg.close();
+      }
+
+    }
+
+  </script>
+
+</body>
+  </html>
