@@ -1308,13 +1308,17 @@ function showHakim(playerId){
     "👑 شما حاکم هستید؛ ۵ کارت خود را ببینید";
 
   showHakimHand(playerId);
-
 }else{
 
   document.getElementById("statusText").textContent =
     "👑 " + player.name + " حاکم شد";
 
+  setTimeout(function(){
+    botChooseTrump(playerId);
+  }, 1000);
+
     }
+
 
     }
 
