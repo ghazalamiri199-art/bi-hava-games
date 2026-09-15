@@ -996,7 +996,7 @@ left:[]
 };
 
 let hakim = null;
-
+let remainingDeck = [];
 
 /* ================================================= */
 /* شروع بازی */
@@ -1286,7 +1286,7 @@ function showHakim(playerId){
   // دسته دوباره کاملاً بر زده می‌شود
   const newDeck =
     shuffle(createDeck());
-
+remainingDeck = newDeck.slice(5);
   // فقط ۵ کارت به حاکم داده می‌شود
   playerCards[playerId] = [];
 
@@ -1475,7 +1475,74 @@ function chooseTrump(playerId, suit){
   document.getElementById("statusText").textContent =
     "👑 حکم انتخاب شد: " + suit;
 
-      }
+  setTimeout(function(){
+    dealRemainingCards();
+  }, 1000);
+
+      }    
+ function dealRemainingCards(){
+
+  if(!remainingDeck || remainingDeck.length === 0){
+    return;
+  }
+
+  // فقط ۵ کارت حاکم باقی می‌ماند
+  const hakimCards =
+    playerCards[hakim].slice();
+
+  // کارت‌های قبلی مرحله تعیین حاکم پاک می‌شوند
+  playerCards = {
+    top:[],
+    right:[],
+    bottom:[],
+    left:[]
+  };
+
+  // ۵ کارت حاکم دوباره نگه داشته می‌شود
+  playerCards[hakim] =
+    hakimCards;
+
+  // پاک کردن نمایش کارت‌های قبلی
+  document.querySelectorAll(".cardStack").forEach(function(stack){
+    stack.innerHTML = "";
+  });
+
+  const need = {
+    top: 13 - playerCards.top.length,
+    right: 13 - playerCards.right.length,
+    bottom: 13 - playerCards.bottom.length,
+    left: 13 - playerCards.left.length
+  };
+
+  const order = ["bottom","right","top","left"];
+
+  let orderIndex = 0;
+
+  remainingDeck.forEach(function(card){
+
+    while(need[order[orderIndex]] <= 0){
+      orderIndex =
+        (orderIndex + 1) % 4;
+    }
+
+    const playerId =
+      order[orderIndex];
+
+    playerCards[playerId].push(card);
+
+    need[playerId]--;
+
+    orderIndex =
+      (orderIndex + 1) % 4;
+
+  });
+
+  remainingDeck = [];
+
+  document.getElementById("statusText").textContent =
+    "🎴 ۱۳ کارت به هر بازیکن داده شد";
+
+  } 
 function botChooseTrump(playerId){
 
   if(playerId !== hakim){
@@ -1569,14 +1636,55 @@ player.name +
 /* بازی عمومی */
 /* ================================================= */
 
-function publicGame(){
+ function publicGame(){
 
-alert(
-"بازی عمومی و آنلاین را فعلاً بعداً اضافه می‌کنیم ❤️"
-);
+  document.getElementById("modePage").style.display = "none";
+  document.getElementById("gamePage").style.display = "block";
 
-}
+  loadTelegramUser();
 
+  document.getElementById("statusText").textContent =
+    "🌐 در حال راه‌اندازی بازی عمومی...";
+
+  document.getElementById("centerCard").textContent =
+    "🌐";
+
+  document.getElementById("centerText").innerHTML =
+    "در حال پیدا کردن بازیکن‌ها...<br>" +
+    "آماده باشید";
+
+  let seconds = 30;
+
+  const timer = setInterval(function(){
+
+    document.getElementById("statusText").textContent =
+      "🌐 در حال پیدا کردن بازیکن‌ها... " +
+      seconds +
+      " ثانیه";
+
+    document.getElementById("centerText").innerHTML =
+      "بازی عمومی<br>" +
+      "شروع تا " +
+      seconds +
+      " ثانیه";
+
+    seconds--;
+
+    if(seconds < 0){
+
+      clearInterval(timer);
+
+      document.getElementById("statusText").textContent =
+        "🌐 زمان انتظار تمام شد";
+
+      document.getElementById("centerText").innerHTML =
+        "بازیکن کافی پیدا نشد";
+
+    }
+
+  },1000);
+
+    }   
 
 /* ================================================= */
 /* بازی با دوستان */
